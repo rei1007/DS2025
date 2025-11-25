@@ -38,26 +38,24 @@
         html {
             width: 100%;
             height: 100%;
-            background-color: transparent; /* HTML背景透明 */
             overflow: hidden; /* ブラウザ自体のスクロールバーは消す */
         }
 
         body {
             font-family: 'Zen Kaku Gothic New', 'Kosugi Maru', sans-serif;
-            background-color: var(--color-bg); /* Bodyに背景色 */
-            color: var(--color-main);
             
-            /* 1920x1080 固定サイズ */
-            max-width: 1920px;
-            max-height: 1080px;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* 内部コンテンツでスクロール制御 */
-            position: relative;
-
-            /* 背景パターン */
+            /* 背景設定 (復活) */
+            background-color: var(--color-bg);
+            color: var(--color-main);
             background-image: radial-gradient(#E5E7EB 2px, transparent 2px);
             background-size: 32px 32px;
+            
+            /* 1920x1080 固定サイズ */
+            width: 1920px;
+            height: 1080px;
+            margin: 0;
+            padding: 0;
+            position: relative;
         }
 
         .material-symbols-rounded {
@@ -68,7 +66,6 @@
         .obs-main {
             width: 100%;
             height: 100%;
-            /* paddingは削除し、内部コンテナのマージンで制御 */
             position: relative;
         }
 
@@ -76,14 +73,15 @@
         .bracket-container {
             width: 100%;
             height: 100%;
-            overflow: auto; /* スクロール可能に */
+            overflow: auto; /* ここでスクロールさせる */
             cursor: grab;   /* ドラッグ可能カーソル */
             user-select: none;
             
-            /* 重要: Flexboxで配置するが、center指定はしない */
+            /* Flexbox設定 (中央寄せ & はみ出し対応) */
             display: flex;
+            /* justify-content/align-items center は削除 (margin: autoに任せる) */
             
-            /* Scrollbar非表示 (見た目重視) */
+            /* Scrollbar非表示 */
             scrollbar-width: none; 
             -ms-overflow-style: none;
         }
@@ -95,14 +93,19 @@
         }
 
         .bracket-wrapper {
-            /* 重要: margin: auto により、画面より小さい時は中央、大きい時は左上から配置される */
+            /* 画面より小さい時は中央、大きい時は左上から配置 */
             margin: auto;
             
             display: flex;
             justify-content: space-between;
             gap: 60px;
-            padding: 60px; /* 外周の余白 */
-            min-width: max-content; /* コンテンツ幅を確保 */
+            
+            /* コンテンツ周囲の余白 (スクロール時に端が切れないように) */
+            padding: 60px;
+            
+            /* 幅と高さの確保 (これがないと潰れてスクロールできない場合がある) */
+            min-width: max-content;
+            min-height: max-content;
         }
 
         .round-column {
@@ -111,6 +114,7 @@
             justify-content: space-around;
             width: 340px;
             position: relative;
+            gap: 40px; /* 縦方向の最低間隔を確保 */
         }
 
         .round-header {
@@ -123,7 +127,7 @@
             box-shadow: 4px 4px 0 0 var(--color-shadow);
             padding: 10px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         /* --- マッチカード --- */
@@ -138,7 +142,7 @@
             gap: 10px;
             position: relative;
             transition: transform 0.1s;
-            cursor: pointer; /* クリック可能を示唆 */
+            cursor: pointer;
         }
         
         .match-card:active {
@@ -395,7 +399,7 @@
             
             // Click to expand
             div.onclick = (e) => {
-                e.stopPropagation(); // ドラッグイベントとの干渉防止
+                e.stopPropagation();
                 openZoom(div);
             };
 
@@ -490,7 +494,7 @@
                 e.preventDefault();
                 const x = e.pageX - slider.offsetLeft;
                 const y = e.pageY - slider.offsetTop;
-                const walkX = (x - startX) * 1.5; // Scroll speed multiplier
+                const walkX = (x - startX) * 1.5;
                 const walkY = (y - startY) * 1.5;
                 slider.scrollLeft = scrollLeft - walkX;
                 slider.scrollTop = scrollTop - walkY;
