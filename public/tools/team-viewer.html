@@ -19,14 +19,19 @@
     <style>
         /* --- デザイン定義 (Soft Brutalism) --- */
         :root {
-            --color-main: #374151;    /* 少しグレー寄りの黒 (#1F2937 -> #374151) */
-            --color-bg: #F9FAFB;      /* より明るい背景 */
+            --color-main: #374151;
+            /* 少しグレー寄りの黒 (#1F2937 -> #374151) */
+            --color-bg: #F9FAFB;
+            /* より明るい背景 */
             --color-panel: #FFFFFF;
-            --color-shadow: #D1D5DB;  /* 薄めの影色 */
+            --color-shadow: #D1D5DB;
+            /* 薄めの影色 */
 
-            --color-alpha: #d0be08;   /* Alpha: 黄 (少し落ち着いた色味) */
-            --color-bravo: #3a0ccd;   /* Bravo: 青 (少し落ち着いた色味) */
-            
+            --color-alpha: #d0be08;
+            /* Alpha: 黄 (少し落ち着いた色味) */
+            --color-bravo: #3a0ccd;
+            /* Bravo: 青 (少し落ち着いた色味) */
+
             --color-alpha-light: #FEFCE8;
             --color-bravo-light: #EFF6FF;
         }
@@ -42,8 +47,14 @@
         }
 
         /* カスタムスクロールバー (細く、控えめに) */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
         ::-webkit-scrollbar-thumb {
             background: #9CA3AF;
             border-radius: 3px;
@@ -59,8 +70,10 @@
         /* 共通ボックス (線を細く、影を小さく) */
         .brutal-box {
             background-color: var(--color-panel);
-            border: 2px solid var(--color-main); /* 3px -> 2px */
-            box-shadow: 4px 4px 0 0 var(--color-shadow); /* 6px -> 4px */
+            border: 2px solid var(--color-main);
+            /* 3px -> 2px */
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
+            /* 6px -> 4px */
             border-radius: 0.75rem;
             transition: all 0.2s;
         }
@@ -72,7 +85,8 @@
             flex-direction: column;
             border-radius: 1rem;
             border: 2px solid var(--color-main);
-            box-shadow: 6px 6px 0 0 var(--color-shadow); /* 10px -> 6px */
+            box-shadow: 6px 6px 0 0 var(--color-shadow);
+            /* 10px -> 6px */
             position: relative;
             margin-bottom: 2rem;
             background-color: white;
@@ -84,8 +98,14 @@
             border-bottom: 2px solid var(--color-main);
             border-radius: 0.8rem 0.8rem 0 0;
         }
-        .bar-alpha { background-color: var(--color-alpha); }
-        .bar-bravo { background-color: var(--color-bravo); }
+
+        .bar-alpha {
+            background-color: var(--color-alpha);
+        }
+
+        .bar-bravo {
+            background-color: var(--color-bravo);
+        }
 
         .team-card-body {
             padding: 2rem;
@@ -96,14 +116,16 @@
         /* ヘッダー周り */
         .header-section {
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid #E5E7EB; /* 点線やグレー線に変更して柔らかく */
+            border-bottom: 2px solid #E5E7EB;
+            /* 点線やグレー線に変更して柔らかく */
             padding-bottom: 1.5rem;
         }
 
         .univ-name {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #4B5563; /* 真っ黒ではなく濃いグレー */
+            color: #4B5563;
+            /* 真っ黒ではなく濃いグレー */
             line-height: 1.2;
             margin-bottom: 0.25rem;
             letter-spacing: 0.05em;
@@ -134,19 +156,22 @@
             font-weight: 800;
             font-size: 1rem;
             padding: 0.25rem 1rem;
-            border-radius: 9999px; /* 丸く */
+            border-radius: 9999px;
+            /* 丸く */
             box-shadow: 2px 2px 0 0 var(--color-shadow);
             margin-top: 0.5rem;
             border: 2px solid var(--color-main);
-            transform: none; /* 回転をなくして落ち着かせる */
+            transform: none;
+            /* 回転をなくして落ち着かせる */
         }
-        
+
         /* サークルタグ */
         .circle-tag {
             display: inline-flex;
             align-items: center;
             background-color: #F9FAFB;
-            border: 2px solid var(--color-main); /* 3px -> 2px */
+            border: 2px solid var(--color-main);
+            /* 3px -> 2px */
             border-radius: 0.75rem;
             padding: 0.4rem 1rem 0.4rem 0.5rem;
             cursor: pointer;
@@ -154,8 +179,17 @@
             transition: transform 0.1s;
             margin-right: 0.5rem;
         }
-        .circle-tag:hover { transform: translateY(-1px); box-shadow: 3px 3px 0 0 var(--color-shadow); }
-        .circle-icon { font-size: 24px; margin-right: 0.5rem; color: #6B7280; }
+
+        .circle-tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 3px 3px 0 0 var(--color-shadow);
+        }
+
+        .circle-icon {
+            font-size: 24px;
+            margin-right: 0.5rem;
+            color: #6B7280;
+        }
 
         /* メンバーリスト */
         .member-grid {
@@ -170,9 +204,11 @@
             align-items: center;
             padding: 0.75rem 1rem;
             background-color: white;
-            border: 2px solid #E5E7EB; /* 薄いグレーの枠線 */
+            border: 2px solid #E5E7EB;
+            /* 薄いグレーの枠線 */
             border-radius: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* ソフトシャドウ */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            /* ソフトシャドウ */
             transition: transform 0.1s;
         }
 
@@ -182,6 +218,7 @@
             background-color: var(--color-alpha-light);
             box-shadow: 0 2px 0 0 var(--color-alpha);
         }
+
         .member-card.highest-xp-bravo {
             border: 2px solid var(--color-bravo);
             background-color: var(--color-bravo-light);
@@ -203,10 +240,17 @@
         }
 
         .highest-xp-alpha .xp-box {
-            background-color: white; color: #854D0E; border-color: var(--color-alpha); font-weight: 900;
+            background-color: white;
+            color: #854D0E;
+            border-color: var(--color-alpha);
+            font-weight: 900;
         }
+
         .highest-xp-bravo .xp-box {
-            background-color: white; color: #1E40AF; border-color: var(--color-bravo); font-weight: 900;
+            background-color: white;
+            color: #1E40AF;
+            border-color: var(--color-bravo);
+            font-weight: 900;
         }
 
         .name-group {
@@ -257,11 +301,13 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
+
         .info-separator-line {
             flex: 1;
             height: 2px;
             background-color: #E5E7EB;
         }
+
         .info-separator-text {
             font-weight: 800;
             font-size: 1rem;
@@ -305,101 +351,229 @@
             border-color: #FECACA;
             background-color: #FEF2F2;
         }
-        .info-block.tactics .info-label { 
-            background-color: #FEE2E2; color: #B91C1C; border-color: #FECACA;
+
+        .info-block.tactics .info-label {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+            border-color: #FECACA;
         }
-        .info-block.tactics .info-content { color: #B91C1C; font-weight: 700; }
+
+        .info-block.tactics .info-content {
+            color: #B91C1C;
+            font-weight: 700;
+        }
 
         /* フッター類 */
         #sync-match-btn {
             position: fixed;
-            bottom: 6rem; left: 50%; transform: translateX(-50%); z-index: 40;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
             /* width/heightをautoにして可変に、paddingを追加 */
-            width: auto; height: 3.5rem; padding: 0 1.5rem;
-            background-color: var(--color-main); color: white;
+            width: auto;
+            height: 3.5rem;
+            padding: 0 1.5rem;
+            background-color: var(--color-main);
+            color: white;
             border: 2px solid white;
-            border-radius: 9999px; /* 丸み */
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            opacity: 0; pointer-events: none; transition: all 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-radius: 9999px;
+            /* 丸み */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             font-weight: 800;
             font-size: 0.9rem;
             white-space: nowrap;
         }
-        #sync-match-btn.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
-        #sync-match-btn:hover { background-color: #111827; }
+
+        #sync-match-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #sync-match-btn:hover {
+            background-color: #111827;
+        }
 
         /* アニメーション用 */
         @keyframes pulse-subtle {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
+
+            0%,
+            100% {
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                transform: translateX(-50%) scale(1.05);
+            }
         }
-        #sync-match-btn.show { animation: pulse-subtle 2s infinite; }
+
+        #sync-match-btn.show {
+            animation: pulse-subtle 2s infinite;
+        }
 
 
         .footer-select-area {
-            position: sticky; bottom: 0;
+            position: sticky;
+            bottom: 0;
             background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
             border-top: 1px solid #E5E7EB;
             padding: 1rem;
             z-index: 30;
         }
+
         .team-select {
-            width: 100%; padding: 0.6rem 1rem;
+            width: 100%;
+            padding: 0.6rem 1rem;
             background-color: white;
             border: 2px solid #D1D5DB;
             border-radius: 0.5rem;
             font-weight: 700;
             font-size: 0.95rem;
             color: #374151;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
-        
+
         /* モーダル */
         .modal-overlay {
-            position: fixed; inset: 0; background-color: rgba(31, 41, 55, 0.5); /* 半透明を薄く */
+            position: fixed;
+            inset: 0;
+            background-color: rgba(31, 41, 55, 0.5);
+            /* 半透明を薄く */
             backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
         }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         .modal-content {
-            background: white; width: 90%; max-width: 600px; max-height: 90vh;
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
             border: 2px solid var(--color-main);
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* ソフトなドロップシャドウ */
-            overflow: hidden; display: flex; flex-direction: column;
-            transform: scale(0.95); transition: transform 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            /* ソフトなドロップシャドウ */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.2s;
         }
-        .modal-overlay.show .modal-content { transform: scale(1); }
-        
-        /* モバイルタブ */
-        .mobile-tab-btn {
-            border: 1px solid #D1D5DB;
-            background-color: white;
-            color: #6B7280;
-            border-radius: 0.5rem;
-            padding: 0.5rem; font-weight: 700;
-            transition: all 0.2s;
-        }
-        .tab-active-alpha { background-color: var(--color-alpha-light); color: #854D0E; border-color: var(--color-alpha); }
-        .tab-active-bravo { background-color: var(--color-bravo-light); color: #1E40AF; border-color: var(--color-bravo); }
 
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        /* --- モバイルタブ (Slim Design) --- */
+
+        /* タブ全体を包むコンテナ */
+        .mobile-tab-container {
+            display: flex;
+            background-color: white;
+            border: 2px solid var(--color-main);
+            border-radius: 9999px;
+            padding: 0.2rem;
+            /* 余白を縮小 */
+            gap: 0.2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            max-width: 320px;
+            /* 幅も少しスリムに */
+            margin: 0 auto;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ボタンの基本スタイル */
+        .mobile-tab-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0;
+            /* 縦幅を大幅に圧縮 */
+            border-radius: 9999px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            /* 文字を少し小さく */
+            color: #9CA3AF;
+            background-color: transparent;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .mobile-tab-btn .material-symbols-rounded {
+            font-size: 16px;
+            /* アイコンも小さく */
+            font-variation-settings: 'FILL' 1;
+            opacity: 0.5;
+            transition: all 0.3s;
+            margin-right: 0.25rem;
+            /* アイコンと文字の間隔調整 */
+        }
+
+        /* ALPHAアクティブ時 */
+        .tab-active-alpha {
+            background-color: var(--color-alpha);
+            color: #FFFFFF;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-active-alpha .material-symbols-rounded {
+            color: #FFFFFF;
+            opacity: 1;
+        }
+
+        /* BRAVOアクティブ時 */
+        .tab-active-bravo {
+            background-color: var(--color-bravo);
+            color: #FFFFFF;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-active-bravo .material-symbols-rounded {
+            color: #FFFFFF;
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="max-w-[1200px] mx-auto flex flex-col min-h-screen relative border-x-0 md:border-x border-gray-200 bg-gray-50">
+    <div
+        class="max-w-[1200px] mx-auto flex flex-col min-h-screen relative border-x-0 md:border-x border-gray-200 bg-gray-50">
 
-        <div class="md:hidden px-4 pt-4 pb-2 flex-shrink-0 z-10 sticky top-0 bg-gray-50/90 backdrop-blur">
-            <div class="flex gap-3">
-                <button id="tab-btn-alpha" class="w-1/2 p-2 shadow-sm" onclick="switchMobileTab('alpha')">ALPHA</button>
-                <button id="tab-btn-bravo" class="w-1/2 p-2 shadow-sm" onclick="switchMobileTab('bravo')">BRAVO</button>
+        <div class="md:hidden px-4 pt-4 pb-1 flex-shrink-0 z-20 sticky top-0 w-full pointer-events-none">
+            <div class="mobile-tab-container pointer-events-auto">
+                <button id="tab-btn-alpha" class="mobile-tab-btn tab-active-alpha" onclick="switchMobileTab('alpha')">
+                    <span class="material-symbols-rounded text-lg mr-1">circle</span>
+                    ALPHA
+                </button>
+                <button id="tab-btn-bravo" class="mobile-tab-btn" onclick="switchMobileTab('bravo')">
+                    <span class="material-symbols-rounded text-lg mr-1">circle</span>
+                    BRAVO
+                </button>
             </div>
         </div>
-
         <main class="flex-1 p-4 md:p-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
@@ -414,15 +588,16 @@
                             <div class="flex flex-wrap items-center gap-4 mt-2">
                                 <div id="alpha-circle-container" class="circle-tag" onclick="">
                                     <span class="material-symbols-rounded circle-icon">diversity_3</span>
-                                    <span id="alpha-circle" class="font-bold text-lg leading-none text-gray-700">-</span>
+                                    <span id="alpha-circle"
+                                        class="font-bold text-lg leading-none text-gray-700">-</span>
                                 </div>
                                 <div id="alpha-avg-xp" class="avg-xp-box hidden">XP -</div>
                             </div>
                         </div>
 
                         <div id="alpha-members" class="member-grid">
-                            </div>
-                        
+                        </div>
+
                         <span id="alpha-xp-warning" class="xp-warning-text hidden">※個人XPは配信紹介禁止</span>
 
                         <div class="info-separator">
@@ -432,7 +607,7 @@
                         </div>
 
                         <div id="alpha-info-container">
-                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -447,15 +622,16 @@
                             <div class="flex flex-wrap items-center gap-4 mt-2">
                                 <div id="bravo-circle-container" class="circle-tag" onclick="">
                                     <span class="material-symbols-rounded circle-icon">diversity_3</span>
-                                    <span id="bravo-circle" class="font-bold text-lg leading-none text-gray-700">-</span>
+                                    <span id="bravo-circle"
+                                        class="font-bold text-lg leading-none text-gray-700">-</span>
                                 </div>
                                 <div id="bravo-avg-xp" class="avg-xp-box hidden">XP -</div>
                             </div>
                         </div>
 
                         <div id="bravo-members" class="member-grid">
-                            </div>
-                        
+                        </div>
+
                         <span id="bravo-xp-warning" class="xp-warning-text hidden">※個人XPは配信紹介禁止</span>
 
                         <div class="info-separator">
@@ -465,7 +641,7 @@
                         </div>
 
                         <div id="bravo-info-container">
-                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -480,13 +656,15 @@
         <footer class="footer-select-area">
             <div class="grid grid-cols-2 gap-6 w-full max-w-[800px] mx-auto">
                 <div class="flex flex-col gap-1">
-                    <label for="alpha-select" class="text-xs font-bold text-gray-400 ml-1 tracking-wider">ALPHA TEAM</label>
+                    <label for="alpha-select" class="text-xs font-bold text-gray-400 ml-1 tracking-wider">ALPHA
+                        TEAM</label>
                     <select id="alpha-select" class="team-select" style="border-left: 6px solid var(--color-alpha);">
                         <option value="">選択してください</option>
                     </select>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <label for="bravo-select" class="text-xs font-bold text-gray-400 ml-1 tracking-wider">BRAVO TEAM</label>
+                    <label for="bravo-select" class="text-xs font-bold text-gray-400 ml-1 tracking-wider">BRAVO
+                        TEAM</label>
                     <select id="bravo-select" class="team-select" style="border-left: 6px solid var(--color-bravo);">
                         <option value="">選択してください</option>
                     </select>
@@ -502,12 +680,14 @@
                 <h3 class="font-bold text-xl text-gray-700 flex items-center gap-2">
                     <span class="material-symbols-rounded">diversity_3</span> CIRCLE INFO
                 </h3>
-                <button onclick="closeCircleModal()" class="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition-all"><span
+                <button onclick="closeCircleModal()"
+                    class="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition-all"><span
                         class="material-symbols-rounded">close</span></button>
             </div>
             <div class="p-8 overflow-y-auto">
                 <div class="flex flex-col items-center text-center mb-8">
-                    <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 shadow-md mb-4 bg-gray-100">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200 shadow-md mb-4 bg-gray-100">
                         <img id="modal-circle-img" src="" alt="icon" class="w-full h-full object-cover"
                             onerror="this.src='data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'%23e5e7eb\' viewBox=\'0 0 24 24\'%3e%3cpath d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z\'/%3e%3c/svg%3e'">
                     </div>
@@ -522,7 +702,8 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <p id="modal-circle-comment" class="text-gray-700 leading-relaxed whitespace-pre-wrap font-medium"></p>
+                    <p id="modal-circle-comment" class="text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
+                    </p>
                 </div>
             </div>
         </div>
@@ -579,12 +760,12 @@
             window.openCircleModal = (circleName) => {
                 const info = circleData.find(c => c['circleName'] === circleName) || circleData.find(c => c['circle_name'] === circleName);
                 if (!info) return;
-                
-                modalImg.src = info['icon_url'] || ''; 
+
+                modalImg.src = info['icon_url'] || '';
                 modalUniv.textContent = info['university'] || '';
                 modalName.textContent = info['circleName'] || '';
                 modalId.textContent = info['twitter'] || '';
-                modalWin.textContent = info['hashtag'] ? `#${info['hashtag'].replace('#','')}` : '';
+                modalWin.textContent = info['hashtag'] ? `#${info['hashtag'].replace('#', '')}` : '';
                 modalComment.innerHTML = info['description'] || '';
                 circleModal.classList.add('show');
             };
@@ -600,9 +781,9 @@
                 alpha: {
                     container: document.getElementById('alpha-card'),
                     name: document.getElementById('alpha-name'),
-                    kana: document.getElementById('alpha-name-kana'), 
+                    kana: document.getElementById('alpha-name-kana'),
                     avgXp: document.getElementById('alpha-avg-xp'),
-                    univ: document.getElementById('alpha-univ'), 
+                    univ: document.getElementById('alpha-univ'),
                     circle: document.getElementById('alpha-circle'),
                     circleContainer: document.getElementById('alpha-circle-container'),
                     infoContainer: document.getElementById('alpha-info-container'),
@@ -612,9 +793,9 @@
                 bravo: {
                     container: document.getElementById('bravo-card'),
                     name: document.getElementById('bravo-name'),
-                    kana: document.getElementById('bravo-name-kana'), 
+                    kana: document.getElementById('bravo-name-kana'),
                     avgXp: document.getElementById('bravo-avg-xp'),
-                    univ: document.getElementById('bravo-univ'), 
+                    univ: document.getElementById('bravo-univ'),
                     circle: document.getElementById('bravo-circle'),
                     circleContainer: document.getElementById('bravo-circle-container'),
                     infoContainer: document.getElementById('bravo-info-container'),
@@ -640,7 +821,7 @@
 
                     initSelects();
                     restoreLocalState();
-                    
+
                     // データのロードが完了してから監視を開始
                     startFirestoreListener();
                 } catch (error) {
@@ -705,10 +886,10 @@
                     const pWeapon = team[`p${i}_weapon`];
                     const xpVal = isValid(pXp) ? Math.floor(Number(pXp)) : " - ";
                     const isHighest = (isValid(pXp) && Number(pXp) === maxXp && maxXp > 0);
-                    
+
                     const row = document.createElement('div');
-                    row.className = `member-card ${isHighest ? (side==='alpha'?'highest-xp-alpha':'highest-xp-bravo') : ''}`;
-                    
+                    row.className = `member-card ${isHighest ? (side === 'alpha' ? 'highest-xp-alpha' : 'highest-xp-bravo') : ''}`;
+
                     const kanaHtml = isValid(pKana) ? `<span class="member-kana">${pKana}</span>` : "";
 
                     row.innerHTML = `
@@ -727,7 +908,7 @@
 
                 // Info Sections
                 let infoHtml = '';
-                const appendInfo = (label, text, isDanger=false) => {
+                const appendInfo = (label, text, isDanger = false) => {
                     const cls = isDanger ? "tactics" : "";
                     infoHtml += `<div class="info-block ${cls}"><div class="info-label">${label}</div><p class="info-content">${text}</p></div>`;
                 };
@@ -754,9 +935,9 @@
             const BROADCAST_CHANNEL = new BroadcastChannel('university_spl_match_control');
             BROADCAST_CHANNEL.onmessage = (event) => {
                 const { alphaId, bravoId } = event.data;
-                if (alphaId && bravoId) { 
-                    activeMatchState = { alphaId, bravoId }; 
-                    checkSyncState(); 
+                if (alphaId && bravoId) {
+                    activeMatchState = { alphaId, bravoId };
+                    checkSyncState();
                 }
             };
 
@@ -765,8 +946,8 @@
                 const isDifferent = (
                     activeMatchState.alphaId && alphaSelect.value !== activeMatchState.alphaId
                 ) || (
-                    activeMatchState.bravoId && bravoSelect.value !== activeMatchState.bravoId
-                );
+                        activeMatchState.bravoId && bravoSelect.value !== activeMatchState.bravoId
+                    );
 
                 if (isDifferent) {
                     syncMatchBtn.classList.add('show');
@@ -776,15 +957,15 @@
             }
 
             syncMatchBtn.addEventListener('click', () => {
-                if (activeMatchState.alphaId) { 
-                    alphaSelect.value = activeMatchState.alphaId; 
-                    updateTeamView('alpha', activeMatchState.alphaId); 
-                    saveLocalState('alpha', activeMatchState.alphaId); 
+                if (activeMatchState.alphaId) {
+                    alphaSelect.value = activeMatchState.alphaId;
+                    updateTeamView('alpha', activeMatchState.alphaId);
+                    saveLocalState('alpha', activeMatchState.alphaId);
                 }
-                if (activeMatchState.bravoId) { 
-                    bravoSelect.value = activeMatchState.bravoId; 
-                    updateTeamView('bravo', activeMatchState.bravoId); 
-                    saveLocalState('bravo', activeMatchState.bravoId); 
+                if (activeMatchState.bravoId) {
+                    bravoSelect.value = activeMatchState.bravoId;
+                    updateTeamView('bravo', activeMatchState.bravoId);
+                    saveLocalState('bravo', activeMatchState.bravoId);
                 }
                 checkSyncState();
             });
@@ -799,4 +980,5 @@
         });
     </script>
 </body>
+
 </html>
