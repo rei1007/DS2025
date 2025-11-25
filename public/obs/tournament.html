@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GKJQRG9G0Q"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-GKJQRG9G0Q');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
+    <title>OBS - 決勝トーナメント</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* --- テーマ定義 --- */
+        :root {
+            --color-main: #1F2937;
+            --color-bg: #F3F4F6;
+            --color-panel: #FFFFFF;
+            --color-shadow: #D1D5DB;
+            --color-alpha: #d0be08;
+            --color-bravo: #3a0ccd;
+            --color-live-bg: #EF4444;
+            --color-live-text: #FFFFFF;
+            --color-live-inactive: #6B7280;
+        }
+
+        /* --- OBS用レイアウト基盤 --- */
+        html {
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* HTML背景透明 */
+            overflow: hidden; /* ブラウザ自体のスクロールバーは消す */
+        }
+
+        body {
+            font-family: 'Zen Kaku Gothic New', 'Kosugi Maru', sans-serif;
+            background-color: var(--color-bg); /* Bodyに背景色 */
+            color: var(--color-main);
+            
+            /* 1920x1080 固定サイズ */
+            max-width: 1920px;
+            max-height: 1080px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 内部コンテンツでスクロール制御 */
+            position: relative;
+
+            /* 背景パターン */
+            background-image: radial-gradient(#E5E7EB 2px, transparent 2px);
+            background-size: 32px 32px;
+        }
+
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 48;
+        }
+
+        /* --- メインエリア --- */
+        .obs-main {
+            width: 100%;
+            height: 100%;
+            /* paddingは削除し、内部コンテナのマージンで制御 */
+            position: relative;
+        }
+
+        /* --- トーナメント表コンテナ (ドラッグ対象) --- */
+        .bracket-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* スクロール可能に */
+            cursor: grab;   /* ドラッグ可能カーソル */
+            user-select: none;
+            
+            /* 重要: Flexboxで配置するが、center指定はしない */
+            display: flex;
+            
+            /* Scrollbar非表示 (見た目重視) */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .bracket-container::-webkit-scrollbar { 
+            display: none; 
+        }
+        .bracket-container.active {
+            cursor: grabbing;
+        }
+
+        .bracket-wrapper {
+            /* 重要: margin: auto により、画面より小さい時は中央、大きい時は左上から配置される */
+            margin: auto;
+            
+            display: flex;
+            justify-content: space-between;
+            gap: 60px;
+            padding: 60px; /* 外周の余白 */
+            min-width: max-content; /* コンテンツ幅を確保 */
+        }
+
+        .round-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 340px;
+            position: relative;
+        }
+
+        .round-header {
+            text-align: center;
+            font-weight: 900;
+            color: var(--color-main);
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--color-main);
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        /* --- マッチカード --- */
+        .match-card {
+            background-color: #FFFFFF;
+            border: 3px solid var(--color-main);
+            border-radius: 16px;
+            box-shadow: 6px 6px 0 0 var(--color-shadow);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            transition: transform 0.1s;
+            cursor: pointer; /* クリック可能を示唆 */
+        }
+        
+        .match-card:active {
+            transform: scale(0.98);
+        }
+
+        /* 配信中強調 */
+        .match-card.is-live-active {
+            border-color: var(--color-live-bg);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2), 8px 8px 0 0 rgba(239, 68, 68, 0.3);
+            animation: pulse-border 2s infinite;
+        }
+        .match-card.is-live-inactive {
+            border-color: var(--color-live-inactive);
+            box-shadow: 6px 6px 0 0 rgba(107, 114, 128, 0.3);
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: var(--color-live-bg); }
+            50% { border-color: #ff8888; }
+            100% { border-color: var(--color-live-bg); }
+        }
+
+        .match-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; padding: 0 4px;
+        }
+        .match-id {
+            background: var(--color-main); color: white; font-size: 16px;
+            padding: 4px 10px; border-radius: 6px; font-weight: bold;
+        }
+        .bo-badge {
+            background: #E5E7EB; color: #4B5563; font-size: 16px;
+            padding: 4px 10px; border-radius: 6px; font-weight: bold; border: 2px solid #D1D5DB;
+        }
+
+        .live-badge {
+            padding: 4px 12px; border-radius: 9999px; font-size: 16px; font-weight: 900;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .live-badge.active { background-color: var(--color-live-bg); color: white; }
+        .live-badge.inactive { background-color: var(--color-live-inactive); color: white; }
+
+        /* チーム行 */
+        .team-row {
+            display: flex; align-items: center; gap: 12px; padding: 10px;
+            border-radius: 8px; background-color: #F9FAFB;
+            height: 60px;
+        }
+        .team-row.winner { background-color: #FEF3C7; font-weight: bold; }
+        .team-row.loser { opacity: 0.6; }
+
+        .team-label { width: 10px; height: 100%; border-radius: 5px; flex-shrink: 0; }
+        .label-alpha { background-color: var(--color-alpha); }
+        .label-bravo { background-color: var(--color-bravo); }
+
+        .team-name-display {
+            flex: 1; font-size: 20px; font-weight: 800;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            pointer-events: none; /* ドラッグの邪魔にならないように */
+        }
+        .team-name-display.withdrawn { text-decoration: line-through; color: #9CA3AF; }
+        .team-name-display.undecided { color: #9CA3AF; }
+
+        .score-display { width: 40px; text-align: center; font-weight: 900; font-size: 28px; }
+        .win-icon { width: 32px; text-align: center; color: #F59E0B; font-size: 28px; }
+
+        /* コネクタ */
+        .match-card::after {
+            content: '→'; position: absolute;
+            right: -50px; top: 50%; transform: translateY(-50%);
+            color: #D1D5DB; font-weight: 900; font-size: 40px;
+            display: none;
+        }
+        .round-column:not(:last-child) .match-card::after { display: block; }
+
+        /* --- 拡大オーバーレイ --- */
+        #zoom-overlay {
+            position: fixed; inset: 0;
+            background-color: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        #zoom-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* 拡大されたカードのスタイル調整 */
+        #zoom-content {
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #zoom-overlay.show #zoom-content { transform: scale(1.5); }
+
+        #zoom-content .match-card::after { display: none !important; }
+        #zoom-content .match-card { cursor: default; pointer-events: none; box-shadow: 12px 12px 0 0 rgba(0,0,0,0.2); }
+
+    </style>
+</head>
+
+<body>
+
+    <main class="obs-main">
+        <div id="bracket-container" class="bracket-container">
+            <div id="bracket-wrapper" class="bracket-wrapper">
+                <div class="flex items-center justify-center w-full h-full">
+                    <span class="text-3xl font-bold text-gray-400 animate-pulse">Loading Data...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="zoom-overlay" onclick="closeZoom()">
+        <div id="zoom-content">
+            </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAotBKDxazOEtOv_IzoqW9bNPQXaz7a3vA",
+            authDomain: "daigakuhai-support-fb.firebaseapp.com",
+            projectId: "daigakuhai-support-fb",
+            storageBucket: "daigakuhai-support-fb.firebasestorage.app",
+            messagingSenderId: "939931798179",
+            appId: "1:939931798179:web:8320fba89104e81f47cd16"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const tournamentRef = doc(db, "state", "tournament");
+        const settingsRef = doc(db, "state", "settings");
+
+        let teamsMap = new Map();
+        let currentFormat = 8;
+        let tournamentData = { matches: {}, roundNames: {} };
+        let tournamentSettings = {
+            matchFormat: { other: 'BO3', semis: 'BO5', finals: 'BO5' }
+        };
+
+        const SEED_ID = "THE_SEED";
+        const bracketWrapper = document.getElementById('bracket-wrapper');
+        const bracketContainer = document.getElementById('bracket-container');
+        
+        // Zoom Elements
+        const zoomOverlay = document.getElementById('zoom-overlay');
+        const zoomContent = document.getElementById('zoom-content');
+
+        async function init() {
+            await fetchTeams();
+            setupFirestoreListeners();
+            setupDragScroll();
+        }
+
+        async function fetchTeams() {
+            try {
+                const res = await fetch('../json/teams.json');
+                const data = await res.json();
+                data.forEach(t => teamsMap.set(t.id, t));
+                teamsMap.set(SEED_ID, { id: SEED_ID, teamName: "シード", university: "-", circle: "-" });
+            } catch (e) { console.error("Fetch teams error", e); }
+        }
+
+        function setupFirestoreListeners() {
+            onSnapshot(settingsRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    tournamentSettings = { ...tournamentSettings, ...data };
+                    if(tournamentData.matches) renderBracket();
+                }
+            });
+
+            onSnapshot(tournamentRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    tournamentData = data;
+                    if (!tournamentData.matches) tournamentData.matches = {};
+                    if (tournamentData.format) currentFormat = parseInt(tournamentData.format);
+                    renderBracket();
+                }
+            });
+        }
+
+        function getTeamName(id) {
+            if (!id) return "未決定";
+            const t = teamsMap.get(id);
+            return t ? t.teamName : "不明なチーム";
+        }
+
+        function checkActiveLive(matchId, roundNum) {
+            const match = tournamentData.matches[matchId];
+            if (!match || !match.isLive) return false;
+            if (match.winner) return false;
+
+            const hasTeams = match.alpha && match.bravo && match.alpha !== SEED_ID && match.bravo !== SEED_ID && !match.alphaWithdraw && !match.bravoWithdraw;
+            if (!hasTeams) return false;
+
+            for (let r = 1; r < roundNum; r++) {
+                const matchCount = currentFormat / Math.pow(2, r);
+                for (let m = 1; m <= matchCount; m++) {
+                    const prevId = `r${r}_m${m}`;
+                    const prevMatch = tournamentData.matches[prevId];
+                    if (prevMatch && prevMatch.isLive && !prevMatch.winner) return false;
+                }
+            }
+            return true;
+        }
+
+        function renderBracket() {
+            bracketWrapper.innerHTML = '';
+            const totalRounds = Math.log2(currentFormat);
+
+            for (let r = 1; r <= totalRounds; r++) {
+                const roundCol = document.createElement('div');
+                roundCol.className = 'round-column';
+
+                let defaultName = `ラウンド ${r}`;
+                if (r === totalRounds) defaultName = "決勝";
+                else if (r === totalRounds - 1) defaultName = "準決勝";
+
+                const rName = tournamentData.roundNames && tournamentData.roundNames[r] ? tournamentData.roundNames[r] : defaultName;
+
+                const header = document.createElement('div');
+                header.className = 'round-header';
+                header.textContent = rName;
+                roundCol.appendChild(header);
+
+                const matchCount = currentFormat / Math.pow(2, r);
+                const boType = getRoundFormat(r, totalRounds);
+
+                for (let m = 1; m <= matchCount; m++) {
+                    const matchId = `r${r}_m${m}`;
+                    const matchData = tournamentData.matches[matchId] || { alpha: null, bravo: null, scoreA: 0, scoreB: 0, winner: null, isLive: false };
+
+                    const isActiveLive = checkActiveLive(matchId, r);
+                    const isAnyLive = matchData.isLive === true;
+
+                    const card = createMatchCard(matchId, matchData, boType, isAnyLive, isActiveLive);
+                    roundCol.appendChild(card);
+                }
+                bracketWrapper.appendChild(roundCol);
+            }
+        }
+
+        function createMatchCard(matchId, data, boType, isAnyLive, isActiveLive) {
+            const div = document.createElement('div');
+            let statusClass = '';
+            if (isAnyLive) {
+                statusClass = isActiveLive ? 'is-live-active' : 'is-live-inactive';
+            }
+            div.className = `match-card ${statusClass}`;
+            
+            // Click to expand
+            div.onclick = (e) => {
+                e.stopPropagation(); // ドラッグイベントとの干渉防止
+                openZoom(div);
+            };
+
+            const header = document.createElement('div');
+            header.className = 'match-header';
+
+            const badges = document.createElement('div');
+            badges.className = 'flex gap-2';
+            badges.innerHTML = `
+                <span class="match-id">${matchId.toUpperCase().replace('_', '-')}</span>
+                <span class="bo-badge">${boType}</span>
+            `;
+            header.appendChild(badges);
+
+            if (isAnyLive) {
+                const liveBadge = document.createElement('div');
+                const badgeClass = isActiveLive ? 'live-badge active' : 'live-badge inactive';
+                liveBadge.className = badgeClass;
+                liveBadge.innerHTML = `<span class="material-symbols-rounded" style="font-size: 18px;">sensors</span>ON AIR`;
+                header.appendChild(liveBadge);
+            }
+
+            div.appendChild(header);
+            div.appendChild(createTeamRow('alpha', data));
+            div.appendChild(createTeamRow('bravo', data));
+
+            return div;
+        }
+
+        function createTeamRow(side, data) {
+            const teamId = side === 'alpha' ? data.alpha : data.bravo;
+            const score = side === 'alpha' ? data.scoreA : data.scoreB;
+            const isWinner = data.winner === side;
+            const isLoser = data.winner && data.winner !== side;
+            const isWithdrawn = data[side + 'Withdraw'] === true;
+            const isSeed = teamId === SEED_ID;
+
+            const teamObj = teamsMap.get(teamId);
+            const teamName = teamObj ? teamObj.teamName : "未決定";
+
+            const row = document.createElement('div');
+            row.className = `team-row ${isWinner ? 'winner' : (isLoser ? 'loser' : '')}`;
+
+            let html = `<div class="team-label ${side === 'alpha' ? 'label-alpha' : 'label-bravo'}"></div>`;
+
+            let nameClass = "team-name-display";
+            if (!teamId) nameClass += " undecided";
+            else if (isWithdrawn) nameClass += " withdrawn";
+
+            html += `<div class="${nameClass}">${teamName}</div>`;
+
+            if (!isSeed && !isWithdrawn && teamId) {
+                if (isWinner) {
+                    html += `<span class="material-symbols-rounded win-icon">emoji_events</span>`;
+                    html += `<div class="score-display text-gray-800">${score}</div>`;
+                } else {
+                    html += `<div class="score-display text-gray-400">${score}</div>`;
+                }
+            }
+
+            row.innerHTML = html;
+            return row;
+        }
+
+        function getRoundFormat(roundNum, totalRounds) {
+            const settings = tournamentSettings.matchFormat || { other: 'BO3', semis: 'BO5', finals: 'BO5' };
+            if (roundNum === totalRounds) return settings.finals;
+            if (roundNum === totalRounds - 1) return settings.semis;
+            return settings.other;
+        }
+
+        // --- Drag Scroll Implementation ---
+        function setupDragScroll() {
+            const slider = bracketContainer;
+            let isDown = false;
+            let startX, scrollLeft, startY, scrollTop;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+                startY = e.pageY - slider.offsetTop;
+                scrollTop = slider.scrollTop;
+            });
+
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const y = e.pageY - slider.offsetTop;
+                const walkX = (x - startX) * 1.5; // Scroll speed multiplier
+                const walkY = (y - startY) * 1.5;
+                slider.scrollLeft = scrollLeft - walkX;
+                slider.scrollTop = scrollTop - walkY;
+            });
+        }
+
+        // --- Zoom Feature ---
+        window.openZoom = (cardElement) => {
+            zoomContent.innerHTML = '';
+            const clone = cardElement.cloneNode(true);
+            clone.style.width = '500px'; // Base width for zoom
+            zoomContent.appendChild(clone);
+            zoomOverlay.classList.add('show');
+        }
+
+        window.closeZoom = () => {
+            zoomOverlay.classList.remove('show');
+        }
+
+        init();
+    </script>
+</body>
+</html>
