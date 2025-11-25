@@ -1,50 +1,155 @@
 [
     {
-        "circle-university": "横浜国立大学",
-        "circle-name": "浜イカ",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1459543611629256704/tlF19GrW_400x400.jpg",
-        "circle-social-id": "hama_ika4559",
-        "circle-social-win": "浜イカWIN",
-        "circle-comment": "スプラトゥーンの企画だけでなくBBQ等の対面企画も定期的に開催しつつ、学部生から院生、エンジョイ勢からガチ勢まで、みんな和気あいあいと活動しています！！"
+        "circleName": "QTSS スプラ部門",
+        "circle_kana": "----",
+        "university": "九州工業大学",
+        "twitter": "@Kyutech_spla",
+        "description": "みんなで楽しむことを第一に日々プラベやオープンマッチをしてます！設立から1年ちょっとだけど新入生もたくさん入って急成長中です！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1782006190022807552/N8NsgZqN_400x400.jpg",
+        "hashtag": "QTSSWINN"
     },
     {
-        "circle-university": "立命館大学",
-        "circle-name": "リツメイカ",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1797446711532818432/Fr3fFT_5_400x400.jpg",
-        "circle-social-id": "RitsumeIKA_lab",
-        "circle-social-win": "リツメイカWIN",
-        "circle-comment": "ガチ勢もエンジョイ勢もみんな仲良しほのぼの平和なリツメイカです！今年は色々な大学さんと交流戦をしたいなと思ってます🦑"
+        "circleName": "squec",
+        "circle_kana": "----",
+        "university": "電気通信大学",
+        "twitter": "@UECSplatoon",
+        "description": "オンオフ問わず多彩な大会を開催し、学部生から院生まで年齢に関わらず仲良くスプラトゥーンをしています🎶",
+        "icon_url": "https://pbs.twimg.com/profile_images/1847300499848187904/rbB4Ay48_400x400.jpg",
+        "hashtag": "squecWIN"
     },
     {
-        "circle-university": "大阪公立大学",
-        "circle-name": "OMUスプラ部",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1907480475419176960/zJ5eAz4O_400x400.jpg",
-        "circle-social-id": "hamu_splatoon3",
-        "circle-social-win": "ハム大スプラ部WIN",
-        "circle-comment": "幅広いパワー帯の部員が各々好きな遊び方で楽しんでいます！<br>キャンパス関係なくオンでわいわいやってます！<br>他大学さんとの交流にも興味あります😎"
+        "circleName": "Tsuquid",
+        "circle_kana": "つくいっど",
+        "university": "筑波大学",
+        "twitter": "@splatoon_itf_ut",
+        "description": "こガチでもエンジョイでも大歓迎‼️サークル内大会やオフ会などイベントも盛りだくさん‼️\nOB・OG含め学年問わずみんなで楽しく活動しています‼️🦑✨",
+        "icon_url": "https://pbs.twimg.com/profile_images/1567846700299202563/h3goVWH5_400x400.jpg",
+        "hashtag": "つくいっどWIN"
     },
     {
-        "circle-university": "電気通信大学",
-        "circle-name": "squec",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1847300499848187904/rbB4Ay48_400x400.jpg",
-        "circle-social-id": "UECSplatoon",
-        "circle-social-win": "squecWIN",
-        "circle-comment": "オンオフ問わず多彩な大会を開催し、学部生から院生まで年齢に関わらず仲良くスプラトゥーンをしています🎶"
+        "circleName": "いかまる",
+        "circle_kana": "----",
+        "university": "東京科学大学",
+        "twitter": "@Ttech_toon_",
+        "description": "大学統合後も変わらずみんなでスプラやってます🦑サークル内活動はもちろん他大との交流や大会参加オフイベなど様々な形で楽しんでます！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1632706730290454530/tcaWJ-D2_400x400.jpg",
+        "hashtag": "いかまるWIN"
     },
     {
-        "circle-university": "筑波大学",
-        "circle-name": "Tsuquid",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1567846700299202563/h3goVWH5_400x400.jpg",
-        "circle-social-id": "splatoon_itf_ut",
-        "circle-social-win": "つくいっどWIN",
-        "circle-comment": "ガチでもエンジョイでも大歓迎‼️サークル内大会やオフ会などイベントも盛りだくさん‼️<br>OB・OG含め学年問わずみんなで楽しく活動しています‼️🦑✨"
+        "circleName": "すぷぱれ！",
+        "circle_kana": "----",
+        "university": "近畿大学",
+        "twitter": "@kindaisplatoon3",
+        "description": "カジュアルなプラべ、上級者のみのプラべ、オフライン交流会を行っています! 募集も多くあったり大会も出てたりと活発です！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1665179845205327872/MmSPhBuq_400x400.jpg",
+        "hashtag": "すぷぱれWIN"
     },
     {
-        "circle-university": "慶應義塾大学",
-        "circle-name": "慶應スプラ同好会",
-        "circle-social-img": "https://pbs.twimg.com/profile_images/1634460254842015750/a1NpOHTV_400x400.jpg",
-        "circle-social-id": "keiospla",
-        "circle-social-win": "慶スプWIN",
-        "circle-comment": "ガチ勢もエンジョイ勢もみんな仲良く楽しくやってます♪<br>他大学とのイベントや交流も活発です！"
+        "circleName": "リツメイカ",
+        "circle_kana": "----",
+        "university": "立命館大学",
+        "twitter": "@RitsumeIKA_lab",
+        "description": "ガチ勢もエンジョイ勢もみんな仲良しほのぼの平和なリツメイカです！今年は色々な大学さんと交流戦をしたいなと思ってます🦑",
+        "icon_url": "https://pbs.twimg.com/profile_images/1797446711532818432/Fr3fFT_5_400x400.jpg",
+        "hashtag": "リツメイカWIN"
+    },
+    {
+        "circleName": "関大スプラ",
+        "circle_kana": "----",
+        "university": "関西大学",
+        "twitter": "@tangkeke_spla",
+        "description": "----",
+        "icon_url": "----",
+        "hashtag": "関スプWIN"
+    },
+    {
+        "circleName": "慶應スプラ同好会",
+        "circle_kana": "----",
+        "university": "慶應義塾大学",
+        "twitter": "@keiospla",
+        "description": "ガチ勢もエンジョイ勢もみんな仲良く楽しくやってます♪他大学とのイベントや交流も活発です！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1634460254842015750/a1NpOHTV_400x400.jpg",
+        "hashtag": "慶スプWIN"
+    },
+    {
+        "circleName": "青山学院大学スプラ愛好会",
+        "circle_kana": "----",
+        "university": "青山学院大学",
+        "twitter": "@agu_splatoon",
+        "description": "みんなで楽しくスプラトゥーンやってます！今年もサークル内大会や交流戦など色々な活動をたくさんやっていきたいと思ってます！\n入会希望はDMまでよろしくお願いします！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1812037790193827840/y5-6_Gt3_400x400.jpg",
+        "hashtag": "ASWIN"
+    },
+    {
+        "circleName": "大阪公立大学スプラ部",
+        "circle_kana": "----",
+        "university": "大阪公立大学",
+        "twitter": "@hamu_splatoon3",
+        "description": "幅広いパワー帯の部員が各々好きな遊び方で楽しんでいます！キャンパス関係なくオンでわいわいやってます！\n他大学さんとの交流にも興味あります😎",
+        "icon_url": "https://pbs.twimg.com/profile_images/1907480475419176960/zJ5eAz4O_400x400.jpg",
+        "hashtag": "ハム大スプラ部WIN"
+    },
+    {
+        "circleName": "でん",
+        "circle_kana": "----",
+        "university": "東京大学",
+        "twitter": "@utspla_den",
+        "description": "実力を問わず、それぞれのスタイルでプレイしながらみんなで和気あいあいと楽しんでいます！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1434408323936243717/fFnoj1ev_400x400.jpg",
+        "hashtag": "でんWIN"
+    },
+    {
+        "circleName": "浜イカ",
+        "circle_kana": "----",
+        "university": "横浜国立大学",
+        "twitter": "@hama_ika4559",
+        "description": "スプラトゥーンの企画だけでなくBBQ等の対面企画も定期的に開催しつつ、学部生から院生、エンジョイ勢からガチ勢まで、みんな和気あいあいと活動しています！！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1459543611629256704/tlF19GrW_400x400.jpg",
+        "hashtag": "浜イカWIN"
+    },
+    {
+        "circleName": "法スプ",
+        "circle_kana": "----",
+        "university": "法政大学",
+        "twitter": "@hosei_spl",
+        "description": "ガチ勢エンジョイ勢を問わず、楽しく活動しています🙌オン活動が基本ですが、大会後の打ち上げやスプゴーの出場など、オフ活動も活発です☺️\n質問があればお気軽にDMまで‼️",
+        "icon_url": "https://pbs.twimg.com/profile_images/1648668422245584897/rnR0UX3j_400x400.jpg",
+        "hashtag": "法スプWIN"
+    },
+    {
+        "circleName": "東京電機大学e-sports部 スプラ部門",
+        "circle_kana": "----",
+        "university": "東京電機大学",
+        "twitter": "@DendaiSpl3",
+        "description": "週に２回のオンラインでの定期活動や不定期でオフラインでの交流を主に行っています❗️また、月に１回ペースで大会をしています‼️",
+        "icon_url": "https://pbs.twimg.com/profile_images/1647239218299809793/ZRb3LJe-_400x400.jpg",
+        "hashtag": "TDUWIN"
+    },
+    {
+        "circleName": "イカQ",
+        "circle_kana": "----",
+        "university": "九州大学",
+        "twitter": "@kyudaispla_ikaQ",
+        "description": "九州大学では約70人の部員がみんなで楽しくワイワイ活動をやっています！週末にはみんなでエンジョイプラべだけでなく、ガチプラベを定期的に行い日々鍛錬を積んでいます！また、オンラインだけでなくオフ大会や学祭などで顔合わせを定期的に行っていて仲の良いサークルになっています！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1907692366275948545/1aJs6_zw_400x400.jpg",
+        "hashtag": "イカQWIN"
+    },
+    {
+        "circleName": "kait esports スプラ部門",
+        "circle_kana": "----",
+        "university": "神奈川工科大学",
+        "twitter": "@KAIT_eSp_Spla",
+        "description": "組織存続の危機に立っております。",
+        "icon_url": "https://pbs.twimg.com/profile_images/1883519664900435968/DzlRu8IL_400x400.jpg",
+        "hashtag": "KAITスプラ部門WIN"
+    },
+    {
+        "circleName": "明薬スプラトゥーン部",
+        "circle_kana": "----",
+        "university": "明治薬科大学",
+        "twitter": "@MPU_splatoon_96",
+        "description": "1年生から6年生まで！エンジョイ勢からガチ勢まで！！みんなでわいわい大会を開いたりして活動しています！とても明るい雰囲気のサークルです🦑🦑",
+        "icon_url": "https://pbs.twimg.com/profile_images/1384844827469119494/neW0R8CA_400x400.jpg",
+        "hashtag": "mpuすぷら部WIN"
     }
 ]
