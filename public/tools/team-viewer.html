@@ -245,33 +245,31 @@
             background-color: #1D4ED8;
         }
 
-        /* チーム選択フッター (レイアウト修正: flex-shrink-0) */
+        /* チーム選択フッター (コンパクト化) */
         .footer-select-area {
             flex-shrink: 0;
-            /* 固定サイズ */
             background-color: var(--color-panel);
             border-top: 2px solid var(--color-main);
-            padding: 1.5rem;
+            padding: 0.75rem 1rem; /* 余白を削減 */
             z-index: 30;
             width: 100%;
-            /* absolute, bottom:0 を削除し、flexフローに参加させる */
         }
 
         .team-select {
             width: 100%;
-            padding: 1rem;
+            padding: 0.5rem 0.75rem; /* パディングを削減 */
             border-radius: 0.5rem;
             border: 2px solid var(--color-main);
             background-color: #F9FAFB;
             font-weight: 700;
             color: var(--color-main);
-            font-size: 1rem;
+            font-size: 0.9rem; /* フォントサイズ微調整 */
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231F2937' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 1rem center;
+            background-position: right 0.5rem center;
             background-repeat: no-repeat;
-            background-size: 1.25em 1.25em;
+            background-size: 1em 1em;
         }
 
         .team-select:focus {
@@ -280,24 +278,28 @@
             box-shadow: 2px 2px 0 0 var(--color-shadow);
         }
 
-        /* 同期ボタン (絶対配置でフロートさせる) */
+        /* 同期ボタン (アイコンのみ・コンパクト) */
         #sync-match-btn {
             position: absolute;
-            /* container内での絶対配置 */
-            bottom: 7rem;
-            /* フッターの高さ分 + マージン */
+            bottom: 5rem; /* フッターが低くなった分、少し下げる */
             left: 50%;
             transform: translateX(-50%);
             z-index: 40;
             background-color: var(--color-main);
             color: white;
-            font-weight: 900;
-            padding: 1rem 2rem;
+            /* 正円にするためのサイズ指定 */
+            width: 3.5rem;
+            height: 3.5rem;
+            padding: 0;
+            
             border-radius: 9999px;
             border: 2px solid var(--color-main);
             box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
+            
             display: flex;
-            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            
             transition: all 0.2s;
             opacity: 0;
             pointer-events: none;
@@ -317,7 +319,7 @@
         }
 
         #sync-match-btn span {
-            font-size: 1.25rem;
+            font-size: 1.75rem; /* アイコンを大きく */
         }
 
         @keyframes fadeInUp {
@@ -495,21 +497,20 @@
             </div>
         </main>
 
-        <button id="sync-match-btn">
+        <button id="sync-match-btn" title="対戦設定と同期">
             <span class="material-symbols-rounded">sync_alt</span>
-            対戦チームに戻す
         </button>
 
         <footer class="footer-select-area shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
             <div class="grid grid-cols-2 gap-4 w-full">
                 <div class="flex flex-col gap-1">
-                    <label for="alpha-select" class="text-xs font-black text-gray-500 ml-1">ALPHA</label>
+                    <label for="alpha-select" class="text-[10px] font-black text-gray-500 ml-1 tracking-wider">ALPHA TEAM</label>
                     <select id="alpha-select" class="team-select">
                         <option value="">選択してください</option>
                     </select>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <label for="bravo-select" class="text-xs font-black text-gray-500 ml-1">BRAVO</label>
+                    <label for="bravo-select" class="text-[10px] font-black text-gray-500 ml-1 tracking-wider">BRAVO TEAM</label>
                     <select id="bravo-select" class="team-select">
                         <option value="">選択してください</option>
                     </select>

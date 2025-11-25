@@ -4,14 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>配信台本表示</title>
+    <title>配信進行表</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap"
-        rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 
     <style>
         /* --- テーマ定義 (共通) --- */
@@ -20,7 +16,21 @@
             --color-bg: #F3F4F6;
             --color-panel: #FFFFFF;
             --color-shadow: #D1D5DB;
-            --color-accent: #1F2937;
+            --color-accent: #2563EB;
+            --color-danger: #EF4444;
+
+            /* 役割別カラー */
+            --bg-caster: #DBEAFE;
+            --text-caster: #1E40AF;
+            --border-caster: #BFDBFE;
+            
+            --bg-commentator: #D1FAE5;
+            --text-commentator: #065F46;
+            --border-commentator: #A7F3D0;
+
+            --bg-broadcaster: #FEF3C7;
+            --text-broadcaster: #92400E;
+            --border-broadcaster: #FDE68A;
         }
 
         body {
@@ -28,246 +38,548 @@
             background-color: var(--color-bg);
             color: var(--color-main);
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+            padding-bottom: 6rem;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #D1D5DB;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9CA3AF;
-        }
-
-        .material-symbols-rounded {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-            font-size: 24px;
-        }
-
-        /* --- 台本タイルスタイル --- */
-        .script-paragraph {
+        /* --- コンポーネント基盤 --- */
+        .panel-brutal {
             background-color: var(--color-panel);
             border: 2px solid var(--color-main);
             border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            cursor: pointer;
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
             transition: all 0.2s;
-            box-shadow: 4px 4px 0 0 var(--color-shadow);
-            /* ハードシャドウ */
-            position: relative;
-            opacity: 0.9;
         }
-
-        /* ホバー時の挙動 */
-        .script-paragraph:hover {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0 0 var(--color-shadow);
-        }
-
-        /* 過去の段落 */
-        .paragraph-past {
-            background-color: #E5E7EB;
-            border-color: #9CA3AF;
-            color: #6B7280;
-            opacity: 0.6;
-            box-shadow: none;
-        }
-
-        .paragraph-past:hover {
-            opacity: 0.8;
-            transform: none;
-        }
-
-        /* アクティブな段落 (強調) */
-        .paragraph-active {
-            background-color: var(--color-main);
-            border-color: var(--color-main);
-            color: white;
-            opacity: 1;
-            transform: scale(1.02);
-            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.2);
-            z-index: 10;
-        }
-
-        .paragraph-active:hover {
-            transform: scale(1.02);
-            /* アクティブ時は動かさない */
-            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.2);
-        }
-
-        /* 読み取り専用モード (ロック中かつ権限なし) */
-        body.read-only-mode .script-paragraph {
-            cursor: default;
-        }
-
-        body.read-only-mode .script-paragraph:hover {
-            transform: none;
-            box-shadow: 4px 4px 0 0 var(--color-shadow);
-            /* 元の影のまま */
-        }
-
-        /* 読み取り専用でもアクティブ表示は維持 */
-        body.read-only-mode .paragraph-active {
-            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.2);
-        }
-
-
-        /* --- 話者ラベル --- */
-        .speaker-name {
-            display: inline-block;
-            font-weight: 900;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            border: 2px solid var(--color-main);
-            background-color: #F3F4F6;
-            color: var(--color-main);
-        }
-
-        /* アクティブ時の話者ラベル */
-        .paragraph-active .speaker-name {
+        
+        .btn-brutal {
             background-color: white;
             color: var(--color-main);
-            border-color: white;
-        }
-
-        /* 特殊な話者スタイル */
-        .speaker-memo .speaker-name {
-            background-color: #FEF3C7;
-            border-color: #D97706;
-            color: #92400E;
-        }
-
-        .paragraph-active.speaker-memo .speaker-name {
-            background-color: #FBBF24;
-            color: #78350F;
-            border-color: #FBBF24;
-        }
-
-        .speaker-action .speaker-name {
-            background-color: transparent;
-            border-color: transparent;
-            color: #4B5563;
-            font-style: italic;
-        }
-
-        .paragraph-active.speaker-action .speaker-name {
-            color: #D1D5DB;
-        }
-
-        /* --- 本文 --- */
-        .line-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            white-space: pre-line;
-            font-weight: 500;
-        }
-
-        /* --- ロックボタン --- */
-        #lock-btn-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 50;
-            display: none;
-            /* デフォルト非表示（権限チェック後に表示） */
-        }
-
-        .lock-btn {
-            width: 64px;
-            height: 64px;
-            border-radius: 9999px;
+            font-weight: 800;
+            padding: 0.5rem 1rem;
             border: 2px solid var(--color-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.2);
-            transition: all 0.2s;
-            font-weight: 900;
+            border-radius: 0.5rem;
+            box-shadow: 2px 2px 0 0 var(--color-shadow);
             cursor: pointer;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
-        .lock-btn:hover {
+        .btn-brutal:hover {
             transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
         }
-
-        .lock-btn:active {
+        .btn-brutal:active {
             transform: translate(0, 0);
             box-shadow: none;
         }
-
-        /* ロック状態 */
-        .btn-locked {
-            background-color: #EF4444;
-            /* Red */
+        .btn-brutal.danger {
+            color: var(--color-danger);
+            border-color: var(--color-danger);
+            background: #FEF2F2;
+        }
+        .btn-brutal.primary {
+            background: var(--color-main);
             color: white;
-            border-color: #991B1B;
         }
 
-        /* アンロック状態 */
-        .btn-unlocked {
-            background-color: #10B981;
-            /* Green */
+        /* --- 現在地に戻るボタン (FAB) --- */
+        .fab-return {
+            position: fixed; 
+            bottom: 2rem; 
+            right: 2rem;
+            width: 3.5rem; 
+            height: 3.5rem;
+            background-color: var(--color-main); 
             color: white;
-            border-color: #065F46;
+            border: 2px solid var(--color-main); 
+            border-radius: 9999px;
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 40; 
+            opacity: 0; 
+            pointer-events: none; 
+            transform: translateY(20px) scale(0.8);
+        }
+        .fab-return.visible { 
+            opacity: 1; 
+            pointer-events: auto; 
+            transform: translateY(0) scale(1); 
+        }
+        .fab-return:hover { 
+            transform: translate(-2px, -2px) scale(1.05); 
+            box-shadow: 6px 6px 0 0 var(--color-shadow); 
+        }
+        .fab-return:active { 
+            transform: translate(0, 0) scale(0.95); 
+            box-shadow: none; 
         }
 
-        /* ステータスインジケータ (全員に見える) */
-        #lock-status-indicator {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: #EF4444;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+        /* --- カスタムタグ定義 --- */
+        red { color: #DC2626; font-weight: bold; }
+        
+        purple-bg { 
+            background-color: #F3E8FF; 
+            color: #6B21A8; 
+            padding: 0.1rem 0.4rem; 
+            border-radius: 4px; 
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.2rem;
+            border: 1px solid #D8B4FE;
+        }
+
+        yellow-bg {
+            background-color: #FEF9C3;
+            color: #1F2937;
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        orange-bg {
+            background-color: #FFEDD5;
+            color: #9A3412;
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        /* --- レイアウト --- */
+        .container-wrapper {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container-wrapper { padding: 0.5rem; }
+        }
+
+        /* --- 凡例・注意事項エリア --- */
+        .info-panel {
+            background: white;
+            border: 2px solid var(--color-main);
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 3px 3px 0 0 var(--color-shadow);
+            overflow: hidden;
+        }
+        
+        .info-header {
+            background: #F9FAFB;
+            padding: 0.75rem 1rem;
             font-weight: 900;
-            font-size: 0.8rem;
+            color: var(--color-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 2px solid var(--color-main);
+        }
+
+        .info-content {
+            padding: 1.5rem;
+            display: none;
+        }
+        .info-content.open { display: block; }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px dashed #E5E7EB;
+        }
+
+        .member-card {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.2);
-            border: 2px solid #991B1B;
-            z-index: 40;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            gap: 0.75rem;
+            font-weight: 800;
+            font-size: 0.9rem;
         }
 
-        #lock-status-indicator.show {
-            opacity: 1;
+        /* 凡例バッジ (小) */
+        .legend-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
+        .legend-caster { background: var(--bg-caster); color: var(--text-caster); border-color: var(--border-caster); }
+        .legend-commentator { background: var(--bg-commentator); color: var(--text-commentator); border-color: var(--border-commentator); }
+        .legend-broadcaster { background: var(--bg-broadcaster); color: var(--text-broadcaster); border-color: var(--border-broadcaster); }
+
+        .note-list {
+            list-style-type: none;
+            padding: 0;
+            font-size: 0.9rem;
+            color: #4B5563;
+        }
+        .note-list li { 
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .note-list li::before {
+            content: "•";
+            position: absolute; left: 0; top: 0;
+            color: var(--color-main);
+            font-weight: bold;
+        }
+
+        /* --- セクション (台本) --- */
+        .script-section {
+            background: var(--color-panel);
+            border: 2px solid var(--color-main);
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            transform: scale(0.99);
+            cursor: pointer;
+            box-shadow: 2px 2px 0 0 transparent; /* 初期状態は影なし */
+        }
+        
+        /* 操作権限がない場合はポインターイベントなし */
+        body:not(.role-controller) .script-section { cursor: default; }
+
+        /* ホバー */
+        .script-section:hover {
+            opacity: 0.8;
+            border-color: #6B7280;
+        }
+
+        /* アクティブ */
+        .section-active {
+            opacity: 1 !important;
+            border-color: var(--color-main);
+            box-shadow: 6px 6px 0 0 rgba(0,0,0,0.15); /* 強調 */
+            transform: scale(1);
+            z-index: 10;
+            background-color: #FFFFFF;
+        }
+
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #F3F4F6;
+            color: var(--color-main);
+        }
+
+        /* --- 行グリッド --- */
+        .row-grid {
+            display: grid;
+            grid-template-columns: 80px 140px 120px 1fr;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #E5E7EB;
+            align-items: start;
+        }
+        .row-grid:last-child { border-bottom: none; }
+
+        @media (max-width: 768px) {
+            .script-section { padding: 1rem; }
+            .row-grid {
+                display: flex; flex-direction: column; gap: 0.75rem;
+            }
+            .mobile-meta-row {
+                display: flex; justify-content: space-between; align-items: flex-start; width: 100%;
+            }
+            .mobile-meta-left {
+                display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; flex: 1;
+            }
+        }
+
+        .col-timing { font-weight: 700; color: #6B7280; font-size: 0.85rem; white-space: nowrap; padding-top: 0.2rem; }
+        
+        .col-screen { 
+            font-size: 0.8rem; 
+            background: #F3F4F6; 
+            padding: 0.2rem 0.5rem; 
+            border-radius: 0.25rem; 
+            color: #1F2937;
+            border: 1px solid #D1D5DB;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        /* --- メンバーバッジ (グラデーション対応) --- */
+        .col-member { 
+            font-weight: 900; 
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            display: inline-block;
+            white-space: nowrap;
+            border: 1px solid transparent;
+            text-shadow: 0 0 1px rgba(255,255,255,0.5);
+        }
+        
+        .mem-実況 { background: var(--bg-caster); color: var(--text-caster); border-color: var(--border-caster); }
+        .mem-解説 { background: var(--bg-commentator); color: var(--text-commentator); border-color: var(--border-commentator); }
+        .mem-配信担当 { background: var(--bg-broadcaster); color: var(--text-broadcaster); border-color: var(--border-broadcaster); }
+        .mem-その他 { background: #F3F4F6; color: #4B5563; border-color: #E5E7EB; }
+
+        /* 実況/解説 混合バッジ (グラデーション) */
+        .mem-combo {
+            background: linear-gradient(110deg, var(--bg-caster) 45%, #FFFFFF 45%, #FFFFFF 55%, var(--bg-commentator) 55%);
+            color: var(--color-main);
+            border: 1px solid #D1D5DB;
+            text-align: center;
+        }
+
+        .col-content { 
+            line-height: 1.8; 
+            white-space: pre-wrap; 
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        /* --- 話題表エリア --- */
+        #topic-table {
+            margin-top: 3rem;
+            background: #F9FAFB;
+            border: 2px solid var(--color-main);
+            border-radius: 1rem;
+            padding: 2rem;
+            scroll-margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            #topic-table { padding: 1rem; margin-top: 2rem; }
+        }
+
+        .topic-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        .topic-title {
+            font-size: 1.25rem; font-weight: 900; color: var(--color-main);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .topic-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        }
+
+        .topic-card {
+            background: #FFFFFF;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid #E5E7EB;
+            font-weight: 700;
+            color: #374151;
+            font-size: 0.95rem;
+            text-align: center;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 4.5rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .topic-card:hover {
+            border-color: var(--color-main);
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 0 #E5E7EB;
+        }
+        .topic-card:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* チェック済み */
+        .topic-card.checked {
+            background: var(--color-main);
+            color: #F3F4F6;
+            border-color: var(--color-main);
+            box-shadow: 2px 2px 0 0 rgba(0,0,0,0.2);
+        }
+        .topic-card.checked::after {
+            content: "check_circle";
+            font-family: 'Material Symbols Rounded';
+            position: absolute; top: 0.25rem; right: 0.25rem;
+            font-size: 1.2rem; color: #10B981;
+        }
+
+        /* 追加ボタンカード */
+        .topic-card.add-btn {
+            border: 2px dashed #9CA3AF;
+            color: #6B7280;
+            background: #F9FAFB;
+        }
+        .topic-card.add-btn:hover {
+            border-color: var(--color-main);
+            color: var(--color-main);
+            background: white;
+            box-shadow: 4px 4px 0 0 var(--color-shadow);
+        }
+
+        a.topic-link {
+            color: #D97706; text-decoration: underline; text-decoration-thickness: 2px;
+            font-weight: 900; cursor: pointer; position: relative; z-index: 20;
+        }
+        a.topic-link:hover { background-color: rgba(255, 255, 255, 0.5); border-radius: 4px; }
+
+        /* --- モーダル (Friendly Brutalism) --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background: #FFFFFF; width: 90%; max-width: 400px;
+            border: 2px solid var(--color-main); border-radius: 1rem;
+            box-shadow: 8px 8px 0 0 var(--color-main);
+            padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem;
+            transform: scale(0.95); transition: transform 0.2s;
+        }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+
+        .modal-title {
+            font-size: 1.25rem; font-weight: 900; display: flex; align-items: center; gap: 0.5rem; color: var(--color-main);
+        }
+        .modal-msg { font-size: 1rem; font-weight: 500; line-height: 1.6; color: #374151; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; }
+
+        .btn-modal {
+            padding: 0.5rem 1.5rem; font-weight: 700; border: 2px solid var(--color-main); border-radius: 0.5rem;
+            transition: all 0.1s; box-shadow: 2px 2px 0 0 var(--color-shadow);
+        }
+        .btn-modal:active { transform: translate(2px, 2px); box-shadow: none; }
+        
+        .btn-cancel { background: white; color: var(--color-main); }
+        .btn-danger { background: #EF4444; color: white; border-color: var(--color-main); }
+        .btn-primary { background: var(--color-main); color: white; }
     </style>
 </head>
 
-<body class="text-gray-900">
+<body>
 
-    <div id="lock-status-indicator">
-        <span class="material-symbols-rounded" style="font-size: 18px;">lock</span>
-        LOCKED
+    <div class="container-wrapper">
+        <header class="text-center mb-6 text-gray-500 font-bold text-xs md:text-sm uppercase tracking-widest">
+            Script & Topics
+        </header>
+
+        <div class="info-panel" id="info-panel">
+            <div class="info-header" onclick="document.getElementById('info-content').classList.toggle('open')">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded">info</span>
+                    <span>凡例・注意事項</span>
+                </div>
+                <span class="material-symbols-rounded">expand_more</span>
+            </div>
+            <div class="info-content open" id="info-content">
+                <div class="member-grid">
+                    <div class="member-card">
+                        <span class="legend-badge legend-caster">実況</span>
+                        <span id="caster-name">（未設定）</span>
+                    </div>
+                    <div class="member-card">
+                        <span class="legend-badge legend-commentator">解説</span>
+                        <span id="commentator-name">（未設定）</span>
+                    </div>
+                    <div class="member-card">
+                        <span class="legend-badge legend-broadcaster">配信担当</span>
+                        <span>ようくん</span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-4 mb-4 text-sm font-bold text-gray-600">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded border border-gray-300" style="background-color: #FEF9C3;"></div>
+                        台本
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded border border-gray-300" style="background-color: #FFEDD5;"></div>
+                        フリートーク
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <p class="mb-2 font-black text-gray-700 text-sm">【運営からのお願い】</p>
+                    <ul class="note-list">
+                        <li>運営員が発言するのはオープニングのみです。以降は実況解説者様にお任せします。</li>
+                        <li>運営からの伝達はチャットで行います。配信中はこまめにご確認ください。</li>
+                        <li>台本の文言は、内容が変わらない範囲で自由に変更していただいて構いません。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <main id="script-container">
+            </main>
+
+        <section id="topic-table">
+            <div class="topic-header">
+                <div class="topic-title">
+                    <span class="material-symbols-rounded">checklist</span>
+                    話題表
+                </div>
+                <button class="btn-brutal danger" id="clear-topics-btn" title="すべてのチェックと追加した話題を削除">
+                    <span class="material-symbols-rounded" style="font-size: 20px;">delete_sweep</span>
+                    全解除
+                </button>
+            </div>
+            <div class="topic-grid" id="topic-grid"></div>
+        </section>
     </div>
 
-    <div class="max-w-[1080px] mx-auto">
-        <main id="script-container" class="p-4 md:p-8 pb-32">
-            <div class="text-center text-gray-500 py-10 font-bold">台本データを読み込み中...</div>
-        </main>
+    <button id="fab-return" class="fab-return" onclick="returnToCurrent()" title="進行中の位置に戻る">
+        <span class="material-symbols-rounded text-2xl">my_location</span>
+    </button>
+
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title" id="confirm-title">
+                <span class="material-symbols-rounded text-red-500">warning</span>
+                CONFIRM
+            </h3>
+            <p class="modal-msg" id="confirm-msg">実行しますか？</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeConfirm(false)">CANCEL</button>
+                <button class="btn-modal btn-danger" id="confirm-ok-btn">EXECUTE</button>
+            </div>
+        </div>
     </div>
 
-    <div id="lock-btn-container">
-        <button id="lock-toggle-btn" class="lock-btn btn-unlocked" title="操作ロック切替">
-            <span class="material-symbols-rounded" id="lock-icon">lock_open</span>
-        </button>
+    <div id="add-topic-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title">
+                <span class="material-symbols-rounded text-blue-500">add_circle</span>
+                ADD TOPIC
+            </h3>
+            <div>
+                <p class="text-sm text-gray-500 font-bold mb-2">追加する話題を入力してください</p>
+                <input type="text" id="new-topic-input" class="w-full p-3 border-2 border-gray-300 rounded-lg font-bold text-gray-700 focus:outline-none focus:border-gray-800 bg-gray-50" placeholder="例：今日の朝ごはん">
+            </div>
+            <div class="modal-actions mt-4">
+                <button class="btn-modal btn-cancel" onclick="closeAddModal()">CANCEL</button>
+                <button class="btn-modal btn-primary" onclick="addTopic()">ADD</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -286,191 +598,361 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const broadcastRef = doc(db, "state", "broadcast");
+        const settingsRef = doc(db, "state", "settings");
+        
         const scriptContainer = document.getElementById('script-container');
-
-        // ロック機能用要素
-        const lockBtnContainer = document.getElementById('lock-btn-container');
-        const lockToggleBtn = document.getElementById('lock-toggle-btn');
-        const lockIcon = document.getElementById('lock-icon');
-        const lockStatusIndicator = document.getElementById('lock-status-indicator');
-
-        let currentActiveIndex = 0;
-
-        // 状態管理
+        const topicGrid = document.getElementById('topic-grid');
+        const fabReturn = document.getElementById('fab-return');
+        
+        // --- State ---
+        let currentSectionIndex = 0;
         let currentUser = { name: '', role: '' };
-        let isScriptLocked = false; // Firestoreからの値
-        let canControl = false;     // 現在のユーザーが操作可能か
+        let canControlScript = false; 
+        
+        // Topics State
+        const staticTopics = [
+            "前の試合の感想", "大学時代の思い出", "大学杯の印象",
+            "スプラトゥーンを始めたきっかけ", "スプラトゥーン歴", "プレイ時間",
+            "自分の持ちブキを持つ理由", "持ち武器の魅力", "アプデや現在の環境について",
+            "Switch2について", "スプラ4に期待すること", "初代、２、３どれが一番好きか",
+            "様々な大会やコミュニティについて"
+        ];
+        let customTopics = [];
+        let checkedTopics = []; 
+
+        // --- Intersection Observer for FAB ---
+        // 監視対象：現在アクティブなセクション
+        let activeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // 画面内にある -> ボタン隠す
+                    fabReturn.classList.remove('visible');
+                } else {
+                    // 画面外に出た -> ボタン表示
+                    fabReturn.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        window.returnToCurrent = () => {
+            // 親フレームのスクロールを防ぐため scrollTo を使用
+            const activeEl = document.querySelector('.section-active');
+            if (activeEl) {
+                const y = activeEl.getBoundingClientRect().top + window.pageYOffset - 100; // ヘッダー分余白
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        };
+
+        // --- 画面崩れ防止 ---
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.topic-link')) {
+                e.preventDefault();
+                const topicTable = document.getElementById('topic-table');
+                if (topicTable) {
+                    const y = topicTable.getBoundingClientRect().top + window.pageYOffset - 20;
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
+            }
+        });
+
+        // --- モーダル制御 ---
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmTitle = document.getElementById('confirm-title');
+        const confirmMsg = document.getElementById('confirm-msg');
+        const confirmOkBtn = document.getElementById('confirm-ok-btn');
+        let confirmCallback = null;
+
+        window.showConfirm = (title, msg, callback) => {
+            confirmTitle.innerHTML = `<span class="material-symbols-rounded text-red-500">warning</span> ${title}`;
+            confirmMsg.textContent = msg;
+            confirmCallback = callback;
+            confirmModal.classList.add('show');
+        };
+
+        window.closeConfirm = (isOk) => {
+            confirmModal.classList.remove('show');
+            if (isOk && confirmCallback) confirmCallback();
+            confirmCallback = null;
+        };
+        confirmOkBtn.onclick = () => closeConfirm(true);
+
+        // --- Add Topic Modal ---
+        const addModal = document.getElementById('add-topic-modal');
+        const topicInput = document.getElementById('new-topic-input');
+
+        window.openAddModal = () => {
+            topicInput.value = "";
+            addModal.classList.add('show');
+            setTimeout(() => topicInput.focus(), 100);
+        };
+        window.closeAddModal = () => addModal.classList.remove('show');
+        
+        window.addTopic = async () => {
+            const text = topicInput.value.trim();
+            if(!text) return;
+            
+            const newCustomTopics = [...customTopics, text];
+            await setDoc(broadcastRef, { customTopics: newCustomTopics }, { merge: true });
+            closeAddModal();
+        };
+
+        // --------------------
+
+        async function loadScript() {
+            try {
+                const response = await fetch('../json/script.json');
+                const data = await response.json();
+                renderScript(data);
+            } catch (e) {
+                console.error("JSON Load Error:", e);
+                scriptContainer.innerHTML = `<div class="p-8 text-center text-red-600 font-bold border-2 border-red-300 rounded-lg bg-red-50">データの読み込みに失敗しました</div>`;
+            }
+        }
+
+        function processContent(text) {
+            if (!text) return "";
+            let processed = text.replace(/話題表/g, '<a href="#topic-table" class="topic-link">話題表</a>');
+            processed = processed.replace(/\n/g, '<br>');
+            return processed;
+        }
+
+        function renderScript(sections) {
+            scriptContainer.innerHTML = '';
+            
+            sections.forEach((section, index) => {
+                const sectionEl = document.createElement('section');
+                sectionEl.className = 'script-section';
+                sectionEl.dataset.index = index;
+
+                const headerEl = document.createElement('div');
+                headerEl.className = 'section-header';
+                headerEl.innerHTML = `<span>${section.title}</span>`;
+                sectionEl.appendChild(headerEl);
+
+                let previousMember = null;
+
+                section.rows.forEach(row => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'row-grid';
+
+                    const mobileMetaRow = document.createElement('div');
+                    mobileMetaRow.className = 'mobile-meta-row md:contents';
+
+                    const mobileMetaLeft = document.createElement('div');
+                    mobileMetaLeft.className = 'mobile-meta-left md:contents';
+
+                    const timingDiv = document.createElement('div');
+                    timingDiv.className = 'col-timing';
+                    timingDiv.textContent = row.timing || '';
+
+                    const screenDiv = document.createElement('div');
+                    if (row.screen) {
+                        screenDiv.className = 'col-screen';
+                        screenDiv.textContent = row.screen;
+                    }
+
+                    const memberWrapper = document.createElement('div');
+                    memberWrapper.className = 'col-member-area';
+                    
+                    const currentMemberName = row.member || '';
+                    if (currentMemberName && currentMemberName !== previousMember) {
+                        const memberDiv = document.createElement('div');
+                        let memClass = 'mem-その他';
+                        if (currentMemberName.includes('実況') && currentMemberName.includes('解説')) {
+                            memClass = 'mem-combo';
+                        } else if (currentMemberName.includes('実況')) {
+                            memClass = 'mem-実況';
+                        } else if (currentMemberName.includes('解説')) {
+                            memClass = 'mem-解説';
+                        } else if (currentMemberName.includes('配信担当')) {
+                            memClass = 'mem-配信担当';
+                        }
+
+                        memberDiv.className = `col-member ${memClass}`;
+                        memberDiv.textContent = currentMemberName;
+                        memberWrapper.appendChild(memberDiv);
+                        previousMember = currentMemberName;
+                    } else if (!currentMemberName) {
+                        previousMember = null;
+                    }
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'col-content';
+                    contentDiv.innerHTML = processContent(row.content);
+
+                    if (window.innerWidth <= 768) {
+                        if(row.timing) mobileMetaLeft.appendChild(timingDiv);
+                        if(row.screen) mobileMetaLeft.appendChild(screenDiv);
+                        mobileMetaRow.appendChild(mobileMetaLeft);
+                        mobileMetaRow.appendChild(memberWrapper);
+                        rowDiv.appendChild(mobileMetaRow);
+                        rowDiv.appendChild(contentDiv);
+                    } else {
+                        rowDiv.appendChild(timingDiv);
+                        rowDiv.appendChild(screenDiv ? screenDiv : document.createElement('div'));
+                        rowDiv.appendChild(memberWrapper);
+                        rowDiv.appendChild(contentDiv);
+                    }
+
+                    sectionEl.appendChild(rowDiv);
+                });
+
+                sectionEl.addEventListener('click', (e) => {
+                    if (e.target.closest('a')) return;
+                    if (!canControlScript) return; 
+                    setDoc(broadcastRef, { scriptIndex: index }, { merge: true });
+                });
+
+                scriptContainer.appendChild(sectionEl);
+            });
+        }
+
+        // --- Render Topics ---
+        function renderTopicGrid() {
+            topicGrid.innerHTML = '';
+            
+            // 1. Static Topics
+            staticTopics.forEach((text, index) => {
+                createTopicCard(index, text);
+            });
+
+            // 2. Custom Topics
+            const offset = staticTopics.length;
+            customTopics.forEach((text, index) => {
+                createTopicCard(offset + index, text);
+            });
+
+            // 3. Add Button
+            const addBtn = document.createElement('div');
+            addBtn.className = 'topic-card add-btn';
+            addBtn.innerHTML = '<span class="material-symbols-rounded">add</span>';
+            addBtn.onclick = openAddModal;
+            topicGrid.appendChild(addBtn);
+        }
+
+        function createTopicCard(id, text) {
+            const card = document.createElement('div');
+            card.className = 'topic-card';
+            if (checkedTopics.includes(id)) {
+                card.classList.add('checked');
+            }
+            card.textContent = text;
+            card.onclick = () => toggleCheck(id);
+            topicGrid.appendChild(card);
+        }
+
+        function toggleCheck(id) {
+            let newChecked;
+            if (checkedTopics.includes(id)) {
+                newChecked = checkedTopics.filter(tid => tid !== id);
+            } else {
+                newChecked = [...checkedTopics, id];
+            }
+            setDoc(broadcastRef, { checkedTopics: newChecked }, { merge: true });
+        }
+
+        // 全解除 (チェックも、追加した話題も)
+        document.getElementById('clear-topics-btn').addEventListener('click', () => {
+            showConfirm(
+                "RESET TOPICS", 
+                "チェック状態と追加した話題を全て削除しますか？", 
+                () => setDoc(broadcastRef, { checkedTopics: [], customTopics: [] }, { merge: true })
+            );
+        });
+
+        // --- データ同期 ---
+        onSnapshot(broadcastRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+
+                if (data.scriptIndex !== undefined) {
+                    // 自動スクロールは、自分が操作していない時（または初回）のみ行うのが理想だが、
+                    // ここでは常に同期させる仕様とする。ただし、戻るボタンの監視のために Observer を付け替える
+                    const shouldScroll = (data.scriptIndex !== currentSectionIndex);
+                    updateActiveSection(data.scriptIndex, shouldScroll);
+                }
+                
+                // Topics Sync
+                let needRender = false;
+                if (data.customTopics) {
+                    customTopics = data.customTopics;
+                    needRender = true;
+                } else {
+                    if(customTopics.length > 0) {
+                        customTopics = [];
+                        needRender = true;
+                    }
+                }
+
+                if (data.checkedTopics) {
+                    checkedTopics = data.checkedTopics;
+                    needRender = true;
+                } else {
+                    if(checkedTopics.length > 0) {
+                        checkedTopics = [];
+                        needRender = true;
+                    }
+                }
+
+                if(needRender) renderTopicGrid();
+                
+                updatePermissions();
+            }
+        });
+
+        // 実況・解説者の名前同期
+        onSnapshot(settingsRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('caster-name').textContent = data.caster || '（未設定）';
+                document.getElementById('commentator-name').textContent = data.commentator || '（未設定）';
+            }
+        });
+
+        function updateActiveSection(index, scroll = true) {
+            currentSectionIndex = index;
+            
+            // 古い監視を解除
+            activeObserver.disconnect();
+
+            document.querySelectorAll('.script-section').forEach(sec => {
+                const secIndex = parseInt(sec.dataset.index);
+                if (secIndex === index) {
+                    sec.classList.add('section-active');
+                    
+                    // 新しいアクティブ要素を監視
+                    activeObserver.observe(sec);
+
+                    if (scroll) {
+                        const y = sec.getBoundingClientRect().top + window.pageYOffset - 100;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                } else {
+                    sec.classList.remove('section-active');
+                }
+            });
+        }
 
         window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'settings-update') {
+            if (event.data?.type === 'settings-update') {
                 currentUser = event.data.user;
                 updatePermissions();
             }
         });
 
-        // 権限とUIの更新
         function updatePermissions() {
-            const isBroadcaster = (currentUser.role === '配信担当');
-
-            // 配信担当だけがロックボタンを見える
-            if (isBroadcaster) {
-                lockBtnContainer.style.display = 'block';
+            // 配信担当 または 運営 が操作可能
+            canControlScript = (currentUser.role === '配信担当' || currentUser.role === '運営');
+            
+            if (canControlScript) {
+                document.body.classList.add('role-controller');
             } else {
-                lockBtnContainer.style.display = 'none';
-            }
-
-            // 操作可能かどうかの判定
-            // 1. 配信担当は常に操作可能 (ロック中でも)
-            // 2. それ以外は、ロックされていない場合のみ操作可能
-            if (isBroadcaster) {
-                canControl = true;
-            } else {
-                canControl = !isScriptLocked;
-            }
-
-            updateReadOnlyStyle();
-        }
-
-        function updateReadOnlyStyle() {
-            if (canControl) {
-                document.body.classList.remove('read-only-mode');
-            } else {
-                document.body.classList.add('read-only-mode');
+                document.body.classList.remove('role-controller');
             }
         }
-
-        // --- JSON読み込み処理 ---
-        async function loadScript() {
-            try {
-                const response = await fetch('../json/script.json');
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const scriptData = await response.json();
-                initializeScript(scriptData);
-            } catch (error) {
-                console.error("台本データの読み込みに失敗しました:", error);
-                scriptContainer.innerHTML = `
-                    <div class="bg-red-50 border-2 border-red-500 text-red-700 p-6 rounded-xl text-center shadow-md">
-                        <p class="font-black mb-2 text-lg">ERROR</p>
-                        <p class="font-bold">台本データの読み込みに失敗しました。</p>
-                    </div>
-                `;
-            }
-        }
-
-        function initializeScript(data) {
-            scriptContainer.innerHTML = '';
-
-            data.forEach((item, index) => {
-                const tile = document.createElement('div');
-                tile.className = 'script-paragraph';
-                tile.dataset.index = index;
-                if (item.speaker === 'メモ') tile.classList.add('speaker-memo');
-                else if (item.speaker.startsWith('→')) tile.classList.add('speaker-action');
-
-                const speakerName = document.createElement('div');
-                speakerName.className = 'speaker-name';
-                speakerName.textContent = item.speaker;
-
-                const lineText = document.createElement('p');
-                lineText.className = 'line-text';
-                lineText.innerHTML = item.line;
-
-                tile.appendChild(speakerName);
-                tile.appendChild(lineText);
-                scriptContainer.appendChild(tile);
-            });
-            updateScriptView(currentActiveIndex);
-        }
-
-        function scrollToActive(element) {
-            const target = element || document.querySelector('.paragraph-active');
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        function updateScriptView(activeIndex) {
-            currentActiveIndex = activeIndex;
-            const allTiles = document.querySelectorAll('.script-paragraph');
-            if (allTiles.length === 0) return;
-
-            let activeTile = null;
-            allTiles.forEach(tile => {
-                const index = parseInt(tile.dataset.index, 10);
-                tile.classList.remove('paragraph-active', 'paragraph-past', 'paragraph-future');
-                if (index < activeIndex) { tile.classList.add('paragraph-past'); }
-                else if (index === activeIndex) {
-                    tile.classList.add('paragraph-active');
-                    activeTile = tile;
-                }
-                else { tile.classList.add('paragraph-future'); }
-            });
-            if (activeTile) { scrollToActive(activeTile); }
-        }
-
-        // --- Firestore リスナー ---
-        onSnapshot(broadcastRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-
-                // 台本位置の更新
-                if (data.scriptIndex !== undefined) {
-                    updateScriptView(data.scriptIndex);
-                }
-
-                // ロック状態の更新
-                isScriptLocked = !!data.scriptLocked;
-                updateLockUI();
-                updatePermissions(); // ロック状態が変わったので操作権限も再評価
-            }
-        });
-
-        function updateLockUI() {
-            // ボタンの見た目更新
-            if (isScriptLocked) {
-                lockToggleBtn.classList.remove('btn-unlocked');
-                lockToggleBtn.classList.add('btn-locked');
-                lockIcon.textContent = 'lock';
-                lockStatusIndicator.classList.add('show'); // インジケータ表示
-            } else {
-                lockToggleBtn.classList.remove('btn-locked');
-                lockToggleBtn.classList.add('btn-unlocked');
-                lockIcon.textContent = 'lock_open';
-                lockStatusIndicator.classList.remove('show'); // インジケータ非表示
-            }
-        }
-
-        // --- アクション: ロック切り替え ---
-        lockToggleBtn.addEventListener('click', async () => {
-            const newState = !isScriptLocked;
-            try {
-                await setDoc(broadcastRef, { scriptLocked: newState }, { merge: true });
-            } catch (e) {
-                console.error("Lock update failed:", e);
-            }
-        });
-
-        // --- アクション: 台本進行 ---
-        scriptContainer.addEventListener('click', async (e) => {
-            // 操作権限がない場合は中断
-            if (!canControl) return;
-
-            const clickedTile = e.target.closest('.script-paragraph');
-            if (clickedTile) {
-                const newIndex = parseInt(clickedTile.dataset.index, 10);
-                try { await setDoc(broadcastRef, { scriptIndex: newIndex }, { merge: true }); } catch (err) { console.error(err); }
-            }
-        });
-
-        window.addEventListener('message', (event) => {
-            if (event.data === 'scroll-to-current') {
-                scrollToActive();
-            }
-        });
 
         loadScript();
-
+        renderTopicGrid(); // 初期描画
     </script>
 </body>
-
 </html>
