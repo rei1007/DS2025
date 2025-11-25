@@ -35,6 +35,7 @@
             --color-alpha: #d0be08;
             --color-bravo: #3a0ccd;
             --color-win-bg: #FEF3C7;
+            --color-seed-bg: #E5E7EB;
         }
 
         body {
@@ -184,10 +185,10 @@
         .match-header {
             position: absolute; top: -12px; left: 0; width: 100%;
             display: flex; justify-content: space-between; padding: 0 0.5rem;
-            pointer-events: none; opacity: 0; transition: opacity 0.2s;
+            pointer-events: none; 
+            /* 常に表示 */
+            opacity: 1; 
         }
-        .match-card:hover .match-header,
-        .match-card.is-live .match-header { opacity: 1; }
 
         .header-left-group {
             display: flex; gap: 4px; pointer-events: auto;
@@ -205,7 +206,13 @@
             z-index: 5; border: 1px solid #D1D5DB;
         }
 
-        .live-control { pointer-events: auto; z-index: 5; }
+        .live-control { 
+            pointer-events: auto; z-index: 5; 
+            /* 配信ボタンはホバー時のみ表示（邪魔にならないように） */
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .match-card:hover .live-control,
+        .match-card.is-live .live-control { opacity: 1; }
 
         .live-btn {
             background-color: #FFFFFF; border: 2px solid #D1D5DB;
@@ -243,21 +250,68 @@
             background-color: #F9FAFB;
         }
         .team-row.winner { background-color: #FEF3C7; border-color: #F59E0B; font-weight: bold; }
-        .team-row.loser { opacity: 0.5; background-color: #E5E7EB; }
+        
+        /* 敗者チームのスタイル (目立つように変更) */
+        .team-row.loser {
+            background-color: #E5E7EB; /* グレー背景 */
+            border-color: #9CA3AF; /* 濃いグレーの枠線 */
+            opacity: 1; /* 文字をはっきり表示 */
+            color: #4B5563; /* テキスト色 */
+        }
+        .team-row.loser .team-label {
+            filter: grayscale(0.6); /* カラーバーをくすませる */
+            opacity: 0.8;
+        }
+        .team-row.loser .team-name-display {
+            color: #4B5563; /* チーム名もグレーに */
+        }
+
+        .team-row.seed { background-color: #F3F4F6; border-color: #E5E7EB; }
 
         .team-label { width: 4px; height: 100%; min-height: 24px; border-radius: 2px; flex-shrink: 0; }
         .label-alpha { background-color: var(--color-alpha); }
         .label-bravo { background-color: var(--color-bravo); }
 
-        .team-info-area { flex: 1; min-width: 0; display: flex; align-items: center; }
+        .team-info-area { flex: 1; min-width: 0; display: flex; align-items: center; position: relative; }
         .team-select {
             width: 100%; font-size: 0.85rem; font-weight: 700; padding: 0.25rem;
-            border: 1px solid #E5E7EB; border-radius: 0.25rem; min-width: 12em; 
+            border: 1px solid #E5E7EB; border-radius: 0.25rem; min-width: 10em; 
         }
         .team-name-display {
             width: 100%; font-size: 0.9rem; font-weight: 700; padding: 0.25rem;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 12em; 
         }
+        
+        /* クリック可能なチーム名 */
+        .team-name-display.clickable {
+            cursor: pointer; transition: all 0.2s;
+        }
+        .team-name-display.clickable:hover {
+            color: #EF4444; text-decoration: underline; background-color: #FEF2F2; border-radius: 4px;
+        }
+
+        /* 棄権スタイル */
+        .team-name-display.withdrawn {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+        
+        /* 1回戦用 棄権ボタン */
+        .withdraw-icon-btn {
+            display: flex; align-items: center; justify-content: center;
+            color: #EF4444; cursor: pointer; padding: 2px; margin-left: 4px;
+            border-radius: 4px; transition: all 0.2s;
+        }
+        .withdraw-icon-btn:hover {
+            background-color: #FEF2F2; transform: scale(1.1);
+        }
+        .withdraw-icon-btn.undo {
+            color: #6B7280;
+        }
+        .withdraw-icon-btn.undo:hover {
+            background-color: #F3F4F6; color: var(--color-main);
+        }
+
         .text-undecided { color: #9CA3AF; font-weight: 500; }
 
         .action-area { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
@@ -273,6 +327,13 @@
         }
         .win-badge.active { background: var(--color-main); color: #FFF; border-color: var(--color-main); }
         
+        /* シード通過バッジ */
+        .seed-badge {
+            padding: 2px 6px; font-size: 0.6rem; font-weight: 900;
+            background-color: #E5E7EB; color: #6B7280; border-radius: 4px;
+            border: 1px solid #D1D5DB; cursor: default;
+        }
+
         /* Connector */
         .match-card::after {
             content: '→'; position: absolute; right: -32px; top: 50%;
@@ -290,6 +351,8 @@
         body.read-only-mode .win-badge:not(.active) { opacity: 0.2; border-color: transparent; background: transparent; }
         body.read-only-mode .round-name-input { pointer-events: none; border-color: transparent; }
         body.read-only-mode .live-btn { pointer-events: none; }
+        body.read-only-mode .team-name-display.clickable { pointer-events: none; color: inherit; text-decoration: none; }
+        body.read-only-mode .withdraw-icon-btn { display: none; }
 
         /* Reset Button */
         .reset-btn {
@@ -318,7 +381,7 @@
         }
         .modal-overlay.show .modal-content { transform: translateY(0); }
         .modal-title { font-size: 1.1rem; font-weight: 900; color: var(--color-main); }
-        .modal-body { font-size: 0.9rem; font-weight: 700; color: #4B5563; line-height: 1.6; }
+        .modal-body { font-size: 0.9rem; font-weight: 700; color: #4B5563; line-height: 1.6; white-space: pre-wrap; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 0.5rem; }
         .btn-modal {
             padding: 0.5rem 1.25rem; border-radius: 0.5rem; font-weight: 900; font-size: 0.85rem;
@@ -351,7 +414,8 @@
             </div>
             <div class="flex items-center gap-4">
                 <div class="text-xs font-bold text-gray-400 text-right">
-                    ※棄権枠はチーム選択で「シード/棄権」を選択
+                    ※「シード」は自動勝利扱い<br>
+                    ※チーム名クリックで「棄権」設定
                 </div>
                 <button id="reset-btn" class="reset-btn" title="トーナメントをリセット">
                     <span class="material-symbols-rounded">restart_alt</span>
@@ -462,7 +526,7 @@
                 const data = await res.json();
                 teamsData = data.map(t => ({ id: t.id, name: t.teamName }));
                 if (!teamsData.some(t => t.id === SEED_ID)) {
-                    teamsData.unshift({ id: SEED_ID, name: "シード/棄権" }); 
+                    teamsData.unshift({ id: SEED_ID, name: "シード" }); 
                 }
             } catch (e) {
                 console.error("Fetch error", e);
@@ -495,7 +559,7 @@
             let startX, scrollLeft, startY, scrollTop;
 
             slider.addEventListener('mousedown', (e) => {
-                if (['SELECT', 'BUTTON', 'INPUT'].includes(e.target.tagName)) return;
+                if (['SELECT', 'BUTTON', 'INPUT', 'SPAN'].includes(e.target.tagName)) return;
                 isDown = true;
                 slider.classList.add('active');
                 startX = e.pageX - slider.offsetLeft;
@@ -522,7 +586,7 @@
             onCancelAction = onCancel;
             modalCancelBtn.style.display = onCancel ? 'block' : (onOk ? 'block' : 'none');
             
-            if (title.includes("リセット") || title.includes("変更")) {
+            if (title.includes("リセット") || title.includes("変更") || title.includes("棄権")) {
                 modalConfirmBtn.classList.add('btn-danger');
                 modalConfirmBtn.classList.remove('btn-confirm');
             } else {
@@ -544,6 +608,37 @@
             confirmModal.classList.remove('show');
             onConfirmAction = null;
             onCancelAction = null;
+        }
+
+        // --- Logic: Red ON AIR Logic ---
+        // Returns true if the match should be colored Red (Active Live)
+        function isActiveMatch(matchId, roundNum) {
+            const match = tournamentData.matches[matchId];
+            if (!match || !match.isLive) return false;
+            
+            // Match must NOT be finished (no winner yet)
+            if (match.winner) return false;
+
+            // Condition 2: Both teams are set and NOT Seed/Withdraw
+            const hasTeams = match.alpha && match.bravo && match.alpha !== SEED_ID && match.bravo !== SEED_ID && !match.alphaWithdraw && !match.bravoWithdraw;
+            if (!hasTeams) return false;
+
+            // Condition 3: No Active Live matches in previous rounds
+            const totalRounds = Math.log2(currentFormat);
+            for (let r = 1; r < roundNum; r++) {
+                const matchCount = currentFormat / Math.pow(2, r);
+                for (let m = 1; m <= matchCount; m++) {
+                    const prevId = `r${r}_m${m}`;
+                    const prevMatch = tournamentData.matches[prevId];
+                    if (prevMatch && prevMatch.isLive) {
+                        const prevHasTeams = prevMatch.alpha && prevMatch.bravo && prevMatch.alpha !== SEED_ID && prevMatch.bravo !== SEED_ID && !prevMatch.alphaWithdraw && !prevMatch.bravoWithdraw;
+                        if (prevHasTeams && !prevMatch.winner) {
+                            return false; 
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         // --- Firestore ---
@@ -571,7 +666,7 @@
                 }
             });
 
-            // 対戦設定の監視 (スコア等の自動同期)
+            // Reverse Sync: Handle score updates from state/match
             onSnapshot(matchRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -581,11 +676,10 @@
                 }
             });
 
-            // 大会設定の監視
             onSnapshot(settingsRef, (docSnap) => {
                 if (docSnap.exists()) {
                     tournamentSettings = docSnap.data();
-                    renderBracket(); // 設定反映のために再描画
+                    renderBracket();
                 }
             });
         }
@@ -615,9 +709,12 @@
             if (alphaWins >= winThreshold) newWinner = 'alpha';
             else if (bravoWins >= winThreshold) newWinner = 'bravo';
             
-            if (match.winner !== newWinner) {
-                match.winner = newWinner;
-                needsUpdate = true;
+            // Don't overwrite winner if it's set by Withdraw/Seed logic
+            if (!match.alphaWithdraw && !match.bravoWithdraw && match.alpha !== SEED_ID && match.bravo !== SEED_ID) {
+                if (match.winner !== newWinner) {
+                    match.winner = newWinner;
+                    needsUpdate = true;
+                }
             }
 
             if (needsUpdate) {
@@ -657,34 +754,40 @@
             let hasChanges = false;
             const totalRounds = Math.log2(currentFormat);
 
-            for (let r = 2; r <= totalRounds; r++) {
+            for (let r = 1; r <= totalRounds; r++) {
                 const matchCount = currentFormat / Math.pow(2, r);
                 for (let m = 1; m <= matchCount; m++) {
                     const matchId = `r${r}_m${m}`;
-                    if (!tournamentData.matches[matchId]) tournamentData.matches[matchId] = { alpha: null, bravo: null, scoreA: 0, scoreB: 0, winner: null, isLive: false };
+                    if (!tournamentData.matches[matchId]) tournamentData.matches[matchId] = { alpha: null, bravo: null, scoreA: 0, scoreB: 0, winner: null, isLive: false, alphaWithdraw: false, bravoWithdraw: false };
                     
                     const match = tournamentData.matches[matchId];
                     
-                    const prevMatchA_Id = `r${r-1}_m${(m*2)-1}`;
-                    const prevMatchB_Id = `r${r-1}_m${(m*2)}`;
-                    const prevMatchA = tournamentData.matches[prevMatchA_Id];
-                    const prevMatchB = tournamentData.matches[prevMatchB_Id];
+                    // Round 2+: Propagate winners
+                    if (r > 1) {
+                        const prevMatchA_Id = `r${r-1}_m${(m*2)-1}`;
+                        const prevMatchB_Id = `r${r-1}_m${(m*2)}`;
+                        const prevMatchA = tournamentData.matches[prevMatchA_Id];
+                        const prevMatchB = tournamentData.matches[prevMatchB_Id];
 
-                    const winnerA = getWinnerTeamId(prevMatchA);
-                    const winnerB = getWinnerTeamId(prevMatchB);
+                        const winnerA = getWinnerTeamId(prevMatchA);
+                        const winnerB = getWinnerTeamId(prevMatchB);
 
-                    if (match.alpha !== (winnerA || null)) {
-                        match.alpha = (winnerA || null);
-                        hasChanges = true;
-                        if(match.isLive) syncToMatchSettings(matchId, r);
-                    }
+                        if (match.alpha !== (winnerA || null)) {
+                            match.alpha = (winnerA || null);
+                            match.alphaWithdraw = false; 
+                            hasChanges = true;
+                            if (isActiveMatch(matchId, r)) syncToMatchSettings(matchId, r);
+                        }
 
-                    if (match.bravo !== (winnerB || null)) {
-                        match.bravo = (winnerB || null);
-                        hasChanges = true;
-                        if(match.isLive) syncToMatchSettings(matchId, r);
+                        if (match.bravo !== (winnerB || null)) {
+                            match.bravo = (winnerB || null);
+                            match.bravoWithdraw = false; 
+                            hasChanges = true;
+                            if (isActiveMatch(matchId, r)) syncToMatchSettings(matchId, r);
+                        }
                     }
                     
+                    // Auto Win Check (Seed or Withdraw)
                     if (checkAutoWin(matchId, match)) {
                         hasChanges = true;
                     }
@@ -695,26 +798,38 @@
 
         function checkAutoWin(matchId, match) {
             let changed = false;
+            if (!match.alpha && !match.bravo) {
+                if (match.winner !== null) { match.winner = null; changed = true; }
+                return changed;
+            }
+
             const isAlphaSeed = match.alpha === SEED_ID;
             const isBravoSeed = match.bravo === SEED_ID;
-            if (isAlphaSeed && isBravoSeed) {
+            const isAlphaWithdraw = match.alphaWithdraw === true;
+            const isBravoWithdraw = match.bravoWithdraw === true;
+
+            if ((isAlphaSeed || isAlphaWithdraw) && (isBravoSeed || isBravoWithdraw)) {
                 if (match.winner !== null) { match.winner = null; changed = true; }
-            } else if (isAlphaSeed) {
+            } 
+            else if (isAlphaSeed || isAlphaWithdraw) {
                 if (match.winner !== 'bravo' || match.scoreA !== 0) {
                     match.winner = 'bravo'; match.scoreA = 0; changed = true;
                 }
-            } else if (isBravoSeed) {
+            } 
+            else if (isBravoSeed || isBravoWithdraw) {
                 if (match.winner !== 'alpha' || match.scoreB !== 0) {
                     match.winner = 'alpha'; match.scoreB = 0; changed = true;
                 }
             }
+            
             return changed;
         }
 
+        // Sync to state/match (Automatic)
         function syncToMatchSettings(matchId, roundNum) {
             const match = tournamentData.matches[matchId];
             if (!match || !match.alpha || !match.bravo) return;
-            if (match.alpha === SEED_ID || match.bravo === SEED_ID) return;
+            if (match.alpha === SEED_ID || match.bravo === SEED_ID || match.alphaWithdraw || match.bravoWithdraw) return;
 
             let rName = tournamentData.roundNames && tournamentData.roundNames[roundNum] ? tournamentData.roundNames[roundNum] : null;
             const totalRounds = Math.log2(currentFormat);
@@ -736,7 +851,7 @@
                 roundName: rName,
                 games: games,
                 boType: boType,
-                tournamentMatchId: matchId
+                tournamentMatchId: matchId // Crucial for reverse sync
             };
             setDoc(matchRef, syncData, { merge: true }).catch(e => console.error("Sync error:", e));
         }
@@ -770,52 +885,51 @@
 
         window.toggleLiveStatus = (targetMatchId, roundNum) => {
             if(isReadOnly) return;
-            
             if(!tournamentData.matches[targetMatchId]) tournamentData.matches[targetMatchId] = { alpha: null, bravo: null, scoreA: 0, scoreB: 0, winner: null, isLive: false };
-            
             const targetMatch = tournamentData.matches[targetMatchId];
             const newState = !targetMatch.isLive;
-            
             targetMatch.isLive = newState;
             
-            if (newState) {
-                const hasTeams = !!targetMatch.alpha && !!targetMatch.bravo;
-                const isFinished = !!targetMatch.winner;
-                if(hasTeams && !isFinished) {
-                    syncToMatchSettings(targetMatchId, roundNum);
-                }
+            if (newState && isActiveMatch(targetMatchId, roundNum)) {
+                syncToMatchSettings(targetMatchId, roundNum);
             }
-            
             updateMatchData({}, null);
         };
 
         window.updateTeam = (matchId, side, teamId) => {
             if(isReadOnly) return;
-            updateMatchData(matchId, { [side]: teamId });
+            const withdrawKey = side + 'Withdraw';
+            updateMatchData(matchId, { [side]: teamId, [withdrawKey]: false });
+        };
+
+        window.openWithdrawModal = (matchId, side, teamName, isAlreadyWithdrawn) => {
+            if (isReadOnly) return;
+            if (isAlreadyWithdrawn) {
+                showModal("棄権の取り消し", `「${teamName}」の棄権を取り消しますか？`, () => {
+                    const key = side + 'Withdraw';
+                    updateMatchData(matchId, { [key]: false, winner: null, scoreA: 0, scoreB: 0 });
+                });
+            } else {
+                showModal("棄権の確認", `「${teamName}」を棄権扱いにしますか？`, () => {
+                    const key = side + 'Withdraw';
+                    updateMatchData(matchId, { [key]: true });
+                });
+            }
         };
 
         window.updateScore = (matchId, side, score) => {
             if(isReadOnly) return;
-            
             const match = tournamentData.matches[matchId] || { scoreA: 0, scoreB: 0 };
             const newScoreA = side === 'alpha' ? parseInt(score) : (match.scoreA || 0);
             const newScoreB = side === 'bravo' ? parseInt(score) : (match.scoreB || 0);
-
             const roundNum = parseInt(matchId.split('_')[0].replace('r', ''));
             const totalRounds = Math.log2(currentFormat);
             const boType = getRoundFormat(roundNum, totalRounds);
             const threshold = boType === 'BO5' ? 3 : 2;
-
             let newWinner = null;
             if (newScoreA >= threshold) newWinner = 'alpha';
             else if (newScoreB >= threshold) newWinner = 'bravo';
-
-            const updates = {
-                scoreA: newScoreA,
-                scoreB: newScoreB,
-                winner: newWinner
-            };
-            
+            const updates = { scoreA: newScoreA, scoreB: newScoreB, winner: newWinner };
             updateMatchData(matchId, updates);
         };
 
@@ -825,8 +939,10 @@
                 for (const key in updates) {
                     tournamentData.matches[matchId][key] = updates[key];
                 }
+                if (updates.alpha !== undefined || updates.bravo !== undefined) {
+                    checkAutoWin(matchId, tournamentData.matches[matchId]);
+                }
             }
-
             propagateBracketData();
             renderBracket();
             saveTournamentData();
@@ -836,18 +952,15 @@
         function renderBracket() {
             bracketWrapper.innerHTML = '';
             const totalRounds = Math.log2(currentFormat);
-            
             for (let r = 1; r <= totalRounds; r++) {
                 const roundCol = document.createElement('div');
                 roundCol.className = 'round-column';
-                
                 const header = document.createElement('div');
                 header.className = 'round-header';
                 let defaultName = `ラウンド ${r}`;
                 if (r === totalRounds) defaultName = "決勝";
                 else if (r === totalRounds - 1) defaultName = "準決勝";
                 else if (r === totalRounds - 2 && totalRounds > 2) defaultName = "準々決勝";
-
                 const savedName = tournamentData.roundNames && tournamentData.roundNames[r] ? tournamentData.roundNames[r] : defaultName;
                 const titleInput = document.createElement('input');
                 titleInput.type = 'text';
@@ -856,66 +969,52 @@
                 titleInput.onchange = (e) => updateRoundName(r, e.target.value);
                 header.appendChild(titleInput);
                 roundCol.appendChild(header);
-
                 const matchCount = currentFormat / Math.pow(2, r);
                 const boType = getRoundFormat(r, totalRounds);
-
                 for (let m = 1; m <= matchCount; m++) {
                     const matchId = `r${r}_m${m}`;
                     if(!tournamentData.matches[matchId]) tournamentData.matches[matchId] = { alpha: null, bravo: null, scoreA: 0, scoreB: 0, winner: null, isLive: false };
-                    
                     const matchData = tournamentData.matches[matchId];
                     const alphaName = getTeamName(matchData.alpha);
                     const bravoName = getTeamName(matchData.bravo);
                     
-                    const hasTeams = !!matchData.alpha && !!matchData.bravo;
-                    const isFinished = !!matchData.winner;
-                    const isActiveContext = hasTeams && !isFinished;
-
-                    const card = createMatchCard(matchId, r, matchData, r === 1, alphaName, bravoName, isActiveContext, boType);
+                    const isRed = isActiveMatch(matchId, r);
+                    
+                    const card = createMatchCard(matchId, r, matchData, r === 1, alphaName, bravoName, isRed, boType);
                     roundCol.appendChild(card);
                 }
                 bracketWrapper.appendChild(roundCol);
             }
         }
 
-        function createMatchCard(matchId, roundNum, data, isFirstRound, alphaName, bravoName, isActiveContext, boType) {
+        function createMatchCard(matchId, roundNum, data, isFirstRound, alphaName, bravoName, isRed, boType) {
             const div = document.createElement('div');
-            const statusClass = isActiveContext ? 'status-active' : 'status-inactive';
+            const statusClass = isRed ? 'status-active' : 'status-inactive';
             div.className = `match-card ${data.isLive ? `is-live ${statusClass}` : ''}`;
-            
             const header = document.createElement('div');
             header.className = 'match-header';
-            
             const headerLeft = document.createElement('div');
             headerLeft.className = 'header-left-group';
-
             const idBadge = document.createElement('span');
             idBadge.className = 'match-id';
             idBadge.textContent = matchId.toUpperCase().replace('_', '-');
-            
             const boBadge = document.createElement('span');
             boBadge.className = 'bo-badge';
             boBadge.textContent = boType;
-
             headerLeft.appendChild(idBadge);
             headerLeft.appendChild(boBadge);
-
             const liveControl = document.createElement('div');
             liveControl.className = 'live-control';
             const liveBtn = document.createElement('button');
             liveBtn.className = 'live-btn';
             liveBtn.onclick = () => toggleLiveStatus(matchId, roundNum);
             liveBtn.innerHTML = `<span class="material-symbols-rounded" style="font-size: 14px;">sensors</span>${data.isLive ? 'ON AIR' : '配信'}`;
-            
             liveControl.appendChild(liveBtn);
             header.appendChild(headerLeft);
             header.appendChild(liveControl);
             div.appendChild(header);
-
             div.appendChild(createTeamRow(matchId, 'alpha', data, isFirstRound, alphaName, boType));
             div.appendChild(createTeamRow(matchId, 'bravo', data, isFirstRound, bravoName, boType));
-
             return div;
         }
 
@@ -924,31 +1023,71 @@
             const isWinner = data.winner === side;
             const isLoser = data.winner && data.winner !== side;
             const disabledAttr = isReadOnly ? 'disabled' : '';
-            row.className = `team-row ${isWinner ? 'winner' : (isLoser ? 'loser' : '')}`;
+            
+            const isWithdrawn = data[side + 'Withdraw'] === true;
+            const teamId = side === 'alpha' ? data.alpha : data.bravo;
+            const isSeed = teamId === SEED_ID;
+            
+            const opponentSide = side === 'alpha' ? 'bravo' : 'alpha';
+            const opponentId = side === 'alpha' ? data.bravo : data.alpha;
+            const opponentIsSeed = opponentId === SEED_ID;
+            const isSeedAdvance = isWinner && opponentIsSeed;
+
+            let rowClass = `team-row ${isWinner ? 'winner' : (isLoser ? 'loser' : '')}`;
+            if(isSeed) rowClass += ' seed';
+            row.className = rowClass;
             
             const labelClass = side === 'alpha' ? 'label-alpha' : 'label-bravo';
             const score = side === 'alpha' ? data.scoreA : data.scoreB;
-            const teamId = side === 'alpha' ? data.alpha : data.bravo;
 
             let contentHTML = `<div class="team-label ${labelClass}"></div>`;
             contentHTML += `<div class="team-info-area">`;
-            if (isFirstRound) {
+            
+            if (isFirstRound || teamId === SEED_ID) {
+                contentHTML += `<div class="flex w-full items-center">`;
                 contentHTML += getTeamSelectHTML(matchId, side, teamId, disabledAttr);
+                if (!isReadOnly && teamId && teamId !== SEED_ID) {
+                    if (isWithdrawn) {
+                        contentHTML += `<button class="withdraw-icon-btn undo" onclick="openWithdrawModal('${matchId}', '${side}', '${nameDisplay}', true)" title="棄権を取り消す"><span class="material-symbols-rounded" style="font-size: 18px;">undo</span></button>`;
+                    } else {
+                        contentHTML += `<button class="withdraw-icon-btn" onclick="openWithdrawModal('${matchId}', '${side}', '${nameDisplay}', false)" title="棄権させる"><span class="material-symbols-rounded" style="font-size: 18px;">block</span></button>`;
+                    }
+                }
+                contentHTML += `</div>`;
+                if(isWithdrawn) contentHTML = contentHTML.replace('class="team-select"', 'class="team-select" style="text-decoration: line-through; color: #9CA3AF;"');
             } else {
                 const undecidedClass = nameDisplay === "未決定" ? "text-undecided" : "";
-                contentHTML += `<div class="team-name-display ${undecidedClass}" title="${nameDisplay}">${nameDisplay}</div>`;
+                const withdrawnClass = isWithdrawn ? "withdrawn" : "";
+                const clickableClass = (!isReadOnly && nameDisplay !== "未決定" && nameDisplay !== "不明なチーム" && !isSeed) ? "clickable" : "";
+                const onClickAttr = clickableClass ? `onclick="openWithdrawModal('${matchId}', '${side}', '${nameDisplay}', ${isWithdrawn})"` : "";
+                const titleAttr = clickableClass ? (isWithdrawn ? "クリックして棄権を取り消し" : "クリックして棄権を選択") : nameDisplay;
+                
+                contentHTML += `<div class="team-name-display ${undecidedClass} ${withdrawnClass} ${clickableClass}" ${onClickAttr} title="${titleAttr}">${nameDisplay}</div>`;
             }
             contentHTML += `</div>`;
 
             contentHTML += `<div class="action-area">`;
-            contentHTML += `
-                <select class="score-select" onchange="updateScore('${matchId}', '${side}', this.value)" ${disabledAttr}>
-                    ${getScoreOptions(score, boType)}
-                </select>
-                <div class="win-badge ${isWinner ? 'active' : ''}" title="${isWinner ? 'WINNER' : ''}">
-                    <span class="material-symbols-rounded text-base">emoji_events</span>
-                </div>
-            `;
+            if (!isSeed && !isWithdrawn) {
+                contentHTML += `
+                    <select class="score-select" onchange="updateScore('${matchId}', '${side}', this.value)" ${disabledAttr}>
+                        ${getScoreOptions(score, boType)}
+                    </select>
+                `;
+            } else {
+                contentHTML += `<div style="width:44px;"></div>`;
+            }
+
+            if (isSeedAdvance) {
+                contentHTML += `<div class="seed-badge" title="シード通過">SEED</div>`;
+            } else if (isWinner) {
+                contentHTML += `
+                    <div class="win-badge active" title="WINNER">
+                        <span class="material-symbols-rounded text-base">emoji_events</span>
+                    </div>
+                `;
+            } else {
+                contentHTML += `<div class="win-badge"></div>`;
+            }
             contentHTML += `</div>`;
             row.innerHTML = contentHTML;
             return row;
