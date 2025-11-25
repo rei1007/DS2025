@@ -577,7 +577,7 @@
             display: none !important;
         }
 
-        @media (max-height: 800px) {
+        @media (max-height: 1000px) {
 
             /* ナビゲーションバーの高さを h-20(80px) から 56px に短縮 */
             #nav-bar-container {
@@ -614,6 +614,9 @@
                 <p id="notif-sender" class="text-sm font-black text-gray-900 uppercase tracking-wider">Sender</p>
                 <p class="text-xs font-bold text-gray-400">NOW</p>
             </div>
+            
+            <img id="notif-image" class="hidden mt-1 mb-1 h-16 w-auto object-cover rounded-md border-2 border-gray-200" src="" alt="image">
+            
             <p id="notif-text" class="text-base font-bold text-gray-700 leading-snug line-clamp-2">Message content</p>
         </div>
         <button class="close-notification-btn text-gray-400 hover:text-gray-900"
@@ -1121,10 +1124,11 @@
                 }
             });
 
-            // --- チャット通知監視 ---
+            // --- チャット通知監視 (画像対応) ---
             const notifEl = document.getElementById('chat-notification');
             const notifSender = document.getElementById('notif-sender');
             const notifText = document.getElementById('notif-text');
+            const notifImage = document.getElementById('notif-image');
             let lastTs = Date.now();
             let timer;
 
@@ -1139,7 +1143,22 @@
                             if (!d.isStaffOnly || (d.isStaffOnly && isStaff)) {
                                 if (timer) clearTimeout(timer);
                                 notifSender.textContent = d.name;
-                                notifText.textContent = d.text;
+                                
+                                // 画像制御
+                                if (d.imageUrl) {
+                                    notifImage.src = d.imageUrl;
+                                    notifImage.classList.remove('hidden');
+                                } else {
+                                    notifImage.classList.add('hidden');
+                                }
+
+                                // テキスト制御 (画像のみの場合もあるので、テキストがない場合は非表示)
+                                if (d.text) {
+                                    notifText.textContent = d.text;
+                                    notifText.classList.remove('hidden');
+                                } else {
+                                    notifText.classList.add('hidden');
+                                }
 
                                 if (d.isStaffOnly) {
                                     notifEl.style.borderColor = '#2563EB';
