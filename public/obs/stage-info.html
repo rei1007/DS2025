@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステージ情報</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600&family=Zen+Antique+Soft&family=Yuji+Syuku&family=Chakra+Petch:wght@600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- ベース設定 --- */
+        :root {
+            --main-color: #2cb385;
+            --alpha-color: #b0b32c;
+            --bravo-color: #9054c2;
+            --bg-color-pale: #e8f4f0;
+            --text-color: #2b2b2b;
+            --highlight-color: #e11d48;
+        }
+
+        html,
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: var(--text-color);
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        .container {
+            width: 1500px;
+            height: 910px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* --- ヘッダーエリア --- */
+        .match-header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1400px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--main-color);
+            z-index: 10;
+            background-color: transparent;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .match-header.hidden {
+            transform: translate(-50%, -100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ラウンド情報 */
+        .round-info {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Yuji Syuku', serif;
+            font-size: 30px;
+            font-weight: bold;
+            color: #555;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2px 20px;
+            border-radius: 10px;
+            white-space: nowrap;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border: 2px solid #ddd;
+        }
+
+        .bo-info {
+            font-size: 0.9em;
+            background: #555;
+            color: #fff;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-family: 'Zen Antique Soft', serif;
+            font-weight: normal;
+        }
+
+        /* チーム情報 */
+        .team-wrapper {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .team-alpha { align-items: flex-end; padding-right: 20px; text-align: right; }
+        .team-bravo { align-items: flex-start; padding-left: 20px; text-align: left; }
+        .loser-style { filter: grayscale(100%); opacity: 0.4; }
+
+        .sub-info-wrapper {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        .team-alpha .sub-info-wrapper { justify-content: flex-end; }
+        .team-bravo .sub-info-wrapper { justify-content: flex-start; }
+
+        .sub-info {
+            font-size: 35px;
+            color: #555;
+            font-family: 'Yuji Syuku', serif;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: opacity 0.5s;
+        }
+        .sub-info.fade-out { opacity: 0; }
+
+        .team-name-wrapper {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            margin-top: -5px;
+            overflow: hidden;
+        }
+        .team-alpha .team-name-wrapper { justify-content: flex-end; }
+        .team-bravo .team-name-wrapper { justify-content: flex-start; }
+
+        .team-name {
+            font-size: 60px;
+            font-family: 'Zen Antique Soft', serif;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+        .team-alpha .team-name { color: var(--alpha-color); }
+        .team-bravo .team-name { color: var(--bravo-color); }
+
+        .score-area {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding-top: 15px;
+        }
+
+        .score {
+            font-size: 90px;
+            font-family: 'Zen Antique Soft', serif;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .score.alpha { color: var(--alpha-color); }
+        .score.bravo { color: var(--bravo-color); }
+        .vs-text { font-size: 40px; color: #aaa; margin-top: 15px; }
+
+
+        /* --- コンテンツエリア --- */
+        .content-area {
+            position: absolute;
+            top: 200px;
+            left: 0;
+            width: 100%;
+            height: 710px;
+            transition: all 0.3s;
+        }
+        
+        .content-area.full-height {
+            top: 0;
+            height: 910px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .view-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .view-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        /* --- View 1: 対戦ステージ (横並び / 2段) --- */
+        .match-stages-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            width: 1400px;
+            height: 100%;
+        }
+
+        /* BO5モード用レイアウト (2段組み) - 修正箇所 */
+        .match-stages-wrapper.bo5-mode {
+            flex-wrap: wrap;       /* 折り返し有効 */
+            align-content: center; /* 中央寄せ */
+            gap: 10px 50px;        /* 上下10px, 左右50px の隙間 */
+        }
+
+        .stage-card {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            opacity: 0.9;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        /* BO5の場合のカードスタイル (縮小して収める) - 修正箇所 */
+        .match-stages-wrapper.bo5-mode .stage-card {
+            flex: 0 0 auto;  /* 幅の自動伸縮を解除 */
+            width: 320px;    /* 固定幅 (これなら2段でも高さ約620px程度に収まる) */
+            max-width: none;
+        }
+
+        .stage-card.active {
+            opacity: 1;
+            transform: scale(1.05);
+            z-index: 5;
+        }
+
+        .stage-card-header {
+            font-family: 'Yuji Syuku', serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #555;
+            background-color: #fff;
+            padding: 4px 24px;
+            border-radius: 50px;
+            border: 2px solid #ccc;
+            white-space: nowrap;
+        }
+        /* BO5の時はヘッダー文字サイズも少し小さく */
+        .match-stages-wrapper.bo5-mode .stage-card-header {
+            font-size: 26px;
+            padding: 2px 20px;
+        }
+
+        .stage-card-frame {
+            width: 100%;
+            aspect-ratio: 40 / 31;
+            background-color: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 6px solid #ccc;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stage-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 勝者枠線 */
+        .stage-card.winner-alpha .stage-card-frame { border-color: var(--alpha-color); }
+        .stage-card.winner-bravo .stage-card-frame { border-color: var(--bravo-color); }
+        
+        .stage-card.active .stage-card-frame {
+            border-color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+        .stage-card.active.winner-alpha .stage-card-frame { border-color: var(--alpha-color); }
+        .stage-card.active.winner-bravo .stage-card-frame { border-color: var(--bravo-color); }
+
+        .stage-card-name {
+            font-size: 32px;
+            font-family: 'Zen Antique Soft', serif;
+            color: #444;
+            text-align: center;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bo5-mode .stage-card-name { font-size: 24px; }
+
+
+        /* --- View 2: 全ステージ一覧 (Grid) --- */
+        .all-stages-wrapper {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr); 
+            gap: 15px;
+            box-sizing: border-box;
+            padding: 20px 40px;
+        }
+
+        .grid-stage-card {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid #ddd;
+            overflow: hidden;
+            position: relative;
+            opacity: 1 !important;
+            transition: all 0.3s;
+        }
+
+        .grid-stage-card.highlight {
+            border: 6px solid var(--highlight-color);
+            transform: scale(1.1);
+            z-index: 100;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: var(--highlight-color); }
+            50% { border-color: #ff5e7d; }
+            100% { border-color: var(--highlight-color); }
+        }
+        
+        .grid-stage-card.finished.winner-alpha { border: 4px solid var(--alpha-color); }
+        .grid-stage-card.finished.winner-bravo { border: 4px solid var(--bravo-color); }
+
+        .grid-stage-frame {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .grid-stage-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        
+        <div class="match-header" id="page-header">
+            <div class="round-info">
+                <span id="round-name">--</span>
+                <span id="bo-count" class="bo-info">BO3</span>
+            </div>
+
+            <div class="team-wrapper team-alpha" id="alpha-wrapper">
+                <div class="sub-info-wrapper">
+                    <div class="sub-info" id="alpha-univ">-</div>
+                </div>
+                <div class="team-name-wrapper">
+                    <div class="team-name" id="alpha-name">Alpha Team</div>
+                </div>
+            </div>
+
+            <div class="score-area">
+                <div class="score alpha" id="alpha-score">0</div>
+                <div class="vs-text">対</div>
+                <div class="score bravo" id="bravo-score">0</div>
+            </div>
+
+            <div class="team-wrapper team-bravo" id="bravo-wrapper">
+                <div class="sub-info-wrapper">
+                    <div class="sub-info" id="bravo-univ">-</div>
+                </div>
+                <div class="team-name-wrapper">
+                    <div class="team-name" id="bravo-name">Bravo Team</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area" id="content-area">
+            <div id="view-match" class="view-container">
+                <div class="match-stages-wrapper" id="match-stages-wrapper">
+                    </div>
+            </div>
+
+            <div id="view-all" class="view-container hidden">
+                <div class="all-stages-wrapper" id="all-stages-wrapper">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAotBKDxazOEtOv_IzoqW9bNPQXaz7a3vA",
+            authDomain: "daigakuhai-support-fb.firebaseapp.com",
+            projectId: "daigakuhai-support-fb",
+            storageBucket: "daigakuhai-support-fb.firebasestorage.app",
+            messagingSenderId: "939931798179",
+            appId: "1:939931798179:web:8320fba89104e81f47cd16"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const matchRef = doc(db, "state", "match");
+        const broadcastRef = doc(db, "state", "broadcast");
+
+        let teamsData = [];
+        let allStagesData = [];
+        let currentState = {};
+        let currentSubOp = 'image';
+
+        const els = {
+            header: document.getElementById('page-header'),
+            contentArea: document.getElementById('content-area'),
+            round: document.getElementById('round-name'),
+            bo: document.getElementById('bo-count'),
+            alpha: {
+                wrapper: document.getElementById('alpha-wrapper'),
+                name: document.getElementById('alpha-name'),
+                univ: document.getElementById('alpha-univ'),
+                score: document.getElementById('alpha-score')
+            },
+            bravo: {
+                wrapper: document.getElementById('bravo-wrapper'),
+                name: document.getElementById('bravo-name'),
+                univ: document.getElementById('bravo-univ'),
+                score: document.getElementById('bravo-score')
+            },
+            viewMatch: document.getElementById('view-match'),
+            viewAll: document.getElementById('view-all'),
+            matchStagesWrapper: document.getElementById('match-stages-wrapper'),
+            allStagesWrapper: document.getElementById('all-stages-wrapper')
+        };
+
+        const NUM_KANJI = ["第一戦", "第二戦", "第三戦", "第四戦", "第五戦"];
+
+        function getCustomLength(str) {
+            let count = 0;
+            for (let i = 0; i < str.length; i++) {
+                const c = str.charCodeAt(i);
+                if ((c >= 0x20 && c <= 0x7e) || (c >= 0xff61 && c <= 0xff9f)) count += 0.5;
+                else count += 1.0;
+            }
+            return count;
+        }
+
+        function adjustTeamNameSize(element, text) {
+            const length = getCustomLength(text);
+            let size = 60;
+            if (length > 9) size = 60 - ((length - 9) * 4);
+            if (size < 35) size = 35;
+            element.style.fontSize = `${size}px`;
+            element.textContent = text;
+        }
+
+        const switchTimers = new Map();
+        function updateSubInfoDisplay(element, univName, circleName) {
+            if (switchTimers.has(element)) {
+                clearInterval(switchTimers.get(element));
+                switchTimers.delete(element);
+            }
+            const fullText = `${univName || ''} ${circleName || ''}`.trim();
+            element.textContent = fullText;
+            element.classList.remove('fade-out');
+
+            const parentWidth = element.parentElement.clientWidth;
+            if (element.scrollWidth > parentWidth) {
+                let showFirst = true;
+                element.textContent = univName;
+                const timerId = setInterval(async () => {
+                    element.classList.add('fade-out');
+                    await new Promise(r => setTimeout(r, 500));
+                    showFirst = !showFirst;
+                    element.textContent = showFirst ? univName : circleName;
+                    element.classList.remove('fade-out');
+                }, 5000);
+                switchTimers.set(element, timerId);
+            }
+        }
+
+        async function loadData() {
+            try {
+                const [teamsRes, stagesRes] = await Promise.all([
+                    fetch('../json/teams.json'),
+                    fetch('../json/stages.json')
+                ]);
+                teamsData = await teamsRes.json();
+                allStagesData = await stagesRes.json();
+                startListeners();
+            } catch (e) { console.error(e); }
+        }
+
+        function startListeners() {
+            onSnapshot(matchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    currentState = docSnap.data();
+                    updateHeader(currentState);
+                    renderMatchStages(); 
+                    renderAllStagesGrid();
+                }
+            });
+
+            onSnapshot(broadcastRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const newOp = data.subOp || 'image';
+                    if (newOp !== currentSubOp) {
+                        currentSubOp = newOp;
+                        updateViewMode();
+                    }
+                }
+            });
+        }
+
+        function updateHeader(data) {
+            els.round.textContent = data.roundName || "試合情報";
+            els.bo.textContent = data.boType || "BO3";
+
+            let alphaPoints = 0, bravoPoints = 0;
+            const games = data.games || [];
+            games.forEach(g => {
+                if (g.winner === 'alpha') alphaPoints++;
+                if (g.winner === 'bravo') bravoPoints++;
+            });
+            els.alpha.score.textContent = alphaPoints;
+            els.bravo.score.textContent = bravoPoints;
+
+            updateTeamHeader('alpha', data.alphaTeamId, alphaPoints >= (data.boType === 'BO5' ? 3 : 2));
+            updateTeamHeader('bravo', data.bravoTeamId, bravoPoints >= (data.boType === 'BO5' ? 3 : 2));
+            
+            const winCount = data.boType === 'BO5' ? 3 : 2;
+            const aWin = alphaPoints >= winCount;
+            const bWin = bravoPoints >= winCount;
+            
+            els.alpha.wrapper.classList.remove('loser-style');
+            els.bravo.wrapper.classList.remove('loser-style');
+            if (aWin) els.bravo.wrapper.classList.add('loser-style');
+            if (bWin) els.alpha.wrapper.classList.add('loser-style');
+        }
+
+        function updateTeamHeader(side, teamId) {
+            const el = els[side];
+            const team = teamsData.find(t => String(t.id) === String(teamId));
+            if (!team) {
+                adjustTeamNameSize(el.name, "未選択");
+                updateSubInfoDisplay(el.univ, "-", "");
+                return;
+            }
+            adjustTeamNameSize(el.name, team.teamName);
+            updateSubInfoDisplay(el.univ, team.university, team.circle);
+        }
+
+        function updateViewMode() {
+            if (currentSubOp === 'image') {
+                els.header.classList.remove('hidden');
+                els.contentArea.classList.remove('full-height');
+                els.viewMatch.classList.remove('hidden');
+                els.viewAll.classList.add('hidden');
+            } else {
+                els.header.classList.add('hidden');
+                els.contentArea.classList.add('full-height');
+                els.viewMatch.classList.add('hidden');
+                els.viewAll.classList.remove('hidden');
+            }
+        }
+
+        function renderMatchStages() {
+            const wrapper = els.matchStagesWrapper;
+            wrapper.innerHTML = '';
+
+            const games = currentState.games || [];
+            const boType = currentState.boType || 'BO3';
+            const displayCount = (boType === 'BO5') ? 5 : 3;
+
+            if (boType === 'BO5') wrapper.classList.add('bo5-mode');
+            else wrapper.classList.remove('bo5-mode');
+
+            let currentGameIdx = games.findIndex(g => g.winner === 'none');
+            if (currentGameIdx === -1 && games.length > 0) currentGameIdx = games.length - 1;
+            if (currentGameIdx < 0) currentGameIdx = 0;
+
+            for (let i = 0; i < displayCount; i++) {
+                const game = games[i] || { stage: '未決定', winner: 'none' };
+                const isActive = (i === currentGameIdx);
+
+                const card = document.createElement('div');
+                card.className = `stage-card ${isActive ? 'active' : ''}`;
+                if (game.winner === 'alpha') card.classList.add('winner-alpha');
+                if (game.winner === 'bravo') card.classList.add('winner-bravo');
+
+                let imgPath = `../stage-image/${game.stage}.png`;
+                if (game.winner === 'alpha') imgPath = `../stage-alpha/${game.stage}.png`;
+                if (game.winner === 'bravo') imgPath = `../stage-bravo/${game.stage}.png`;
+
+                const gameLabel = NUM_KANJI[i] || `第${i+1}戦`;
+
+                card.innerHTML = `
+                    <div class="stage-card-header">${gameLabel}</div>
+                    <div class="stage-card-frame">
+                        <img src="${imgPath}" class="stage-card-img" alt="${game.stage}" onerror="this.src='../stage-image/未決定.png'">
+                    </div>
+                    <div class="stage-card-name">${game.stage}</div>
+                `;
+                wrapper.appendChild(card);
+            }
+        }
+
+        function renderAllStagesGrid() {
+            const wrapper = els.allStagesWrapper;
+            wrapper.innerHTML = '';
+
+            const games = currentState.games || [];
+            
+            let activeStage = null;
+            let finishedStages = [];
+            let scheduledStages = [];
+
+            let activeIdx = games.findIndex(g => g.winner === 'none');
+            if (activeIdx === -1 && games.length > 0) activeIdx = games.length;
+
+            for (let i = 0; i < games.length; i++) {
+                const game = games[i];
+                if (!game.stage || game.stage === '未決定') continue;
+
+                if (i === activeIdx) {
+                    activeStage = { name: game.stage, status: 'active', winner: 'none' };
+                } else if (i < activeIdx) {
+                    finishedStages.push({ name: game.stage, status: 'finished', winner: game.winner });
+                } else {
+                    scheduledStages.push({ name: game.stage, status: 'scheduled', winner: 'none' });
+                }
+            }
+
+            const displayList = [];
+            const addedNames = new Set();
+
+            if (activeStage) {
+                displayList.push(activeStage);
+                addedNames.add(activeStage.name);
+            }
+            finishedStages.forEach(s => {
+                displayList.push(s);
+                addedNames.add(s.name);
+            });
+            scheduledStages.forEach(s => {
+                if(!addedNames.has(s.name)) {
+                    displayList.push(s);
+                    addedNames.add(s.name);
+                }
+            });
+            allStagesData.forEach(name => {
+                if (!addedNames.has(name)) {
+                    displayList.push({ name: name, status: 'other', winner: 'none' });
+                    addedNames.add(name);
+                }
+            });
+
+            displayList.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'grid-stage-card';
+                if (item.status === 'active') card.classList.add('highlight');
+                if (item.status === 'finished') {
+                    card.classList.add('finished');
+                    if (item.winner === 'alpha') card.classList.add('winner-alpha');
+                    if (item.winner === 'bravo') card.classList.add('winner-bravo');
+                }
+
+                let imgPath = `../stage-image/${item.name}.png`;
+                if (item.winner === 'alpha') imgPath = `../stage-alpha/${item.name}.png`;
+                if (item.winner === 'bravo') imgPath = `../stage-bravo/${item.name}.png`;
+
+                card.innerHTML = `
+                    <div class="grid-stage-frame">
+                        <img src="${imgPath}" class="grid-stage-img" alt="${item.name}" onerror="this.src='../stage-image/未決定.png'">
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

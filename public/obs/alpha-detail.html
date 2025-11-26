@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アルファチーム詳細</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600&family=Zen+Antique+Soft&family=Yuji+Syuku&family=Chakra+Petch:wght@600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --main-color: #b0b32c;
+            --bg-color-pale: #f4f4e8;
+            --text-color: #2b2b2b;
+        }
+
+        html,
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: var(--text-color);
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        .container {
+            width: 1500px;
+            height: 910px;
+            position: relative;
+            box-sizing: border-box;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ヘッダーエリア --- */
+        .header-area {
+            width: 100%;
+            height: 160px;
+            border-bottom: 4px solid var(--main-color);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+
+        .sub-info-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .sub-info {
+            font-size: 45px;
+            color: #555;
+            font-family: 'Yuji Syuku', serif;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: opacity 0.5s;
+        }
+
+        .sub-info.fade-out {
+            opacity: 0;
+        }
+
+        .xp-badge {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 45px;
+            color: var(--main-color);
+            font-weight: bold;
+            background-color: #fff;
+            padding: 2px 15px;
+            border: 4px solid var(--main-color);
+            border-radius: 4px;
+            white-space: nowrap;
+            margin-left: 20px;
+        }
+
+        .xp-badge span {
+            color: #666;
+            font-size: 30px;
+            margin-right: 8px;
+            font-weight: normal;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        .team-name-wrapper {
+            width: 100%;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .team-name {
+            font-size: 65px;
+            font-family: 'Zen Antique Soft', serif;
+            color: var(--main-color);
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        /* --- コンテンツエリア共通 --- */
+        .content-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .view-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .view-container.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* === チーム詳細ビュー === */
+        /* 左側: メンバーリスト */
+        .members-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .member-card {
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-left: 10px solid var(--main-color);
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0 20px 20px 0;
+        }
+
+        .member-name {
+            font-size: 50px;
+            font-family: 'Zen Antique Soft', serif;
+            line-height: 1.2;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .weapon-list {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .weapon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .weapon-img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            font-size: 20px;
+            color: #777;
+        }
+
+        .weapon-text-fallback {
+            font-size: 25px;
+            color: #777;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        /* 右側: 情報エリア (共通パーツとしても使用) */
+        .info-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .info-box {
+            background-color: var(--bg-color-pale);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-box.hidden {
+            display: none;
+        }
+
+        .info-title {
+            font-family: 'Yuji Syuku', serif;
+            font-size: 35px;
+            color: #444;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 26px;
+            background-color: var(--main-color);
+            margin-right: 10px;
+        }
+
+        .info-text {
+            font-family: "Zen Antique Soft";
+            font-size: 35px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #444;
+        }
+
+
+        /* === サークル情報ビュー === */
+        .circle-view {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            gap: 20px;
+        }
+
+        /* 左側: アイコン・Twitter・ハッシュタグ */
+        .circle-left-column {
+            flex: 1;
+            /* 左側は少し狭く */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 4px solid var(--main-color);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .circle-icon-large {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 6px solid var(--main-color);
+            object-fit: cover;
+            margin-bottom: 20px;
+            background-color: #eee;
+        }
+
+        .circle-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+            font-family: 'Chakra Petch', sans-serif;
+            color: #444;
+        }
+
+        .circle-meta-icon {
+            font-size: 40px;
+            color: var(--main-color);
+        }
+
+        .circle-meta-text {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        /* 右側: 説明文 */
+        .circle-right-column {
+            flex: 2;
+            /* 右側を広く */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .circle-desc-box {
+            height: fit-content;
+            background-color: var(--bg-color-pale);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header-area">
+            <div class="header-top-row">
+                <div class="sub-info-wrapper">
+                    <div class="sub-info" id="header-sub-info">-</div>
+                </div>
+                <div class="xp-badge" id="header-xp-badge"><span>平均XP：</span><b id="team-xp">-</b></div>
+            </div>
+            <div class="team-name-wrapper">
+                <div class="team-name" id="header-main-title">Alpha Team</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+
+            <div id="view-team-details" class="view-container">
+                <div class="members-column" id="member-list">
+                </div>
+
+                <div class="info-column">
+                    <div class="info-box" id="box-records">
+                        <div class="info-title">実績</div>
+                        <div class="info-text" id="team-records">-</div>
+                    </div>
+                    <div class="info-box" id="box-comment">
+                        <div class="info-title">意気込み</div>
+                        <div class="info-text" id="team-comment">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-circle-info" class="view-container hidden">
+                <div class="circle-view">
+                    <div class="circle-left-column">
+                        <img id="circle-img" src="" class="circle-icon-large" alt="Circle Icon"
+                            onerror="this.src='data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'%23e5e7eb\' viewBox=\'0 0 24 24\'%3e%3cpath d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z\'/%3e%3c/svg%3e'">
+
+                        <div class="circle-meta-item">
+                            <span class="material-symbols-rounded circle-meta-icon">alternate_email</span>
+                            <span class="circle-meta-text" id="circle-twitter">-</span>
+                        </div>
+
+                        <div class="circle-meta-item">
+                            <span class="material-symbols-rounded circle-meta-icon">tag</span>
+                            <span class="circle-meta-text" id="circle-hashtag">-</span>
+                        </div>
+                    </div>
+
+                    <div class="circle-right-column">
+                        <div class="circle-desc-box">
+                            <div class="info-title">サークル紹介</div>
+                            <div class="info-text" id="circle-desc">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAotBKDxazOEtOv_IzoqW9bNPQXaz7a3vA",
+            authDomain: "daigakuhai-support-fb.firebaseapp.com",
+            projectId: "daigakuhai-support-fb",
+            storageBucket: "daigakuhai-support-fb.firebasestorage.app",
+            messagingSenderId: "939931798179",
+            appId: "1:939931798179:web:8320fba89104e81f47cd16"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 監視対象: マッチ情報(チームID取得用) と 放送制御(表示モード切替用)
+        const matchRef = doc(db, "state", "match");
+        const broadcastRef = doc(db, "state", "broadcast");
+
+        let teamsData = [];
+        let circleData = [];
+        let currentTeamId = null;
+        let currentSubOp = 'details'; // 'details' or 'circle'
+
+        // UI要素
+        const els = {
+            // ヘッダー
+            headerSubInfo: document.getElementById('header-sub-info'),
+            headerMainTitle: document.getElementById('header-main-title'),
+            headerXpBadge: document.getElementById('header-xp-badge'),
+            xpValue: document.getElementById('team-xp'),
+
+            // コンテナ
+            viewTeam: document.getElementById('view-team-details'),
+            viewCircle: document.getElementById('view-circle-info'),
+
+            // チーム詳細用
+            boxRecords: document.getElementById('box-records'),
+            textRecords: document.getElementById('team-records'),
+            boxComment: document.getElementById('box-comment'),
+            textComment: document.getElementById('team-comment'),
+            members: document.getElementById('member-list'),
+
+            // サークル情報用
+            circleImg: document.getElementById('circle-img'),
+            circleTwitter: document.getElementById('circle-twitter'),
+            circleHashtag: document.getElementById('circle-hashtag'),
+            circleDesc: document.getElementById('circle-desc')
+        };
+
+        const switchTimers = new Map();
+
+        // --- ヘッダー制御 ---
+        function updateSubInfoDisplay(element, text1, text2, enableSwitch = true) {
+            if (switchTimers.has(element)) {
+                clearInterval(switchTimers.get(element));
+                switchTimers.delete(element);
+            }
+
+            // 切り替え無効(サークルモード時など)の場合はtext1のみ表示
+            if (!enableSwitch || !text2) {
+                element.textContent = text1 || '-';
+                element.classList.remove('fade-out');
+                return;
+            }
+
+            const fullText = `${text1 || ''} ${text2 || ''}`.trim();
+            element.textContent = fullText;
+            element.classList.remove('fade-out');
+
+            const parentWidth = element.parentElement.clientWidth;
+            if (element.scrollWidth > parentWidth) {
+                startSwitchCycle(element, text1, text2);
+            }
+        }
+
+        function startSwitchCycle(element, text1, text2) {
+            let showFirst = true;
+            element.textContent = text1;
+            const timerId = setInterval(async () => {
+                element.classList.add('fade-out');
+                await new Promise(r => setTimeout(r, 500));
+                showFirst = !showFirst;
+                element.textContent = showFirst ? text1 : text2;
+                element.classList.remove('fade-out');
+            }, 5000);
+            switchTimers.set(element, timerId);
+        }
+
+        // --- データ読み込み ---
+        async function loadData() {
+            try {
+                // 両方のJSONを取得
+                const [teamsRes, circleRes] = await Promise.all([
+                    fetch('../json/teams.json'),
+                    fetch('../json/circle-info.json')
+                ]);
+
+                teamsData = await teamsRes.json();
+                circleData = await circleRes.json();
+
+                // Firestore監視開始
+                startListeners();
+            } catch (e) {
+                console.error("Data loading failed:", e);
+            }
+        }
+
+        function startListeners() {
+            // 1. チームIDの監視
+            onSnapshot(matchRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.alphaTeamId !== currentTeamId) {
+                        currentTeamId = data.alphaTeamId;
+                        render(); // データが変わったので再描画
+                    }
+                }
+            });
+
+            // 2. 表示モード(subOp)の監視
+            onSnapshot(broadcastRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const newOp = data.subOp || 'details';
+                    if (newOp !== currentSubOp) {
+                        currentSubOp = newOp;
+                        render(); // モードが変わったので再描画
+                    }
+                }
+            });
+        }
+
+        // --- 描画メイン ---
+        function render() {
+            // データ検索
+            const team = teamsData.find(t => String(t.id) === String(currentTeamId));
+
+            if (!team) {
+                showEmptyState();
+                return;
+            }
+
+            // モードに応じた表示切り替え
+            if (currentSubOp === 'details') {
+                // === チーム詳細モード ===
+                els.viewTeam.classList.remove('hidden');
+                els.viewCircle.classList.add('hidden');
+                els.headerXpBadge.style.opacity = '1';
+
+                // ヘッダー: 大学名 + サークル名 (切り替えあり)
+                updateSubInfoDisplay(els.headerSubInfo, team.university, team.circle, true);
+                els.headerMainTitle.textContent = team.teamName;
+                els.xpValue.textContent = team.team_average_xp || '-';
+
+                // コンテンツ更新
+                updateTeamDetailsContent(team);
+
+            } else {
+                // === サークル情報モード ===
+                els.viewTeam.classList.add('hidden');
+                els.viewCircle.classList.remove('hidden');
+                els.headerXpBadge.style.opacity = '0'; // XPは隠す
+
+                // ヘッダー: 大学名のみ (切り替えなし), メインタイトルはサークル名
+                updateSubInfoDisplay(els.headerSubInfo, team.university, null, false);
+                els.headerMainTitle.textContent = team.circle || team.teamName; // サークル名が無ければチーム名
+
+                // コンテンツ更新
+                updateCircleInfoContent(team);
+            }
+        }
+
+        function showEmptyState() {
+            els.headerMainTitle.textContent = "チーム未選択";
+            els.headerSubInfo.textContent = "-";
+            els.xpValue.textContent = "-";
+            els.members.innerHTML = "";
+            els.viewTeam.classList.remove('hidden');
+            els.viewCircle.classList.add('hidden');
+        }
+
+        // --- チーム詳細のコンテンツ更新 ---
+        function updateTeamDetailsContent(team) {
+            // 実績
+            const records = team.records;
+            if (!records || records === '-' || records === '----' || records.trim() === '') {
+                els.boxRecords.classList.add('hidden');
+            } else {
+                els.boxRecords.classList.remove('hidden');
+                els.textRecords.textContent = records;
+            }
+
+            // 意気込み
+            const comment = team.comment;
+            if (!comment || comment === '-' || comment === '----' || comment.trim() === '') {
+                els.boxComment.classList.add('hidden');
+            } else {
+                els.boxComment.classList.remove('hidden');
+                els.textComment.textContent = comment;
+            }
+
+            // メンバーリスト
+            els.members.innerHTML = "";
+            for (let i = 1; i <= 4; i++) {
+                const name = team[`p${i}_name`];
+                const rawWeapon = team[`p${i}_weapon`];
+
+                if (name && name.trim() !== '----') {
+                    const card = document.createElement('div');
+                    card.className = 'member-card';
+
+                    let weaponsHtml = '';
+                    if (rawWeapon) {
+                        const weapons = rawWeapon.split(/[、,]/).slice(0, 3);
+                        const itemsHtml = weapons.map(w => {
+                            const weaponName = w.trim();
+                            if (!weaponName) return '';
+                            const fileName = weaponName.replace(/\//g, '');
+                            const imgSrc = `./image/ブキ画像/${fileName}.png`;
+                            return `
+                                <div class="weapon-item">
+                                    <img src="${imgSrc}" class="weapon-img" alt="${weaponName}" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="weapon-text-fallback" style="display:none;">${weaponName}</div>
+                                </div>
+                            `;
+                        }).join('');
+                        weaponsHtml = `<div class="weapon-list">${itemsHtml}</div>`;
+                    } else {
+                        weaponsHtml = `<div class="weapon-text-fallback">-</div>`;
+                    }
+
+                    card.innerHTML = `<div class="member-name">${name}</div>${weaponsHtml}`;
+                    els.members.appendChild(card);
+                }
+            }
+        }
+
+        // --- サークル情報のコンテンツ更新 ---
+        function updateCircleInfoContent(team) {
+            // circle-info.json から検索
+            const info = circleData.find(c => c['circleName'] === team.circle) ||
+                circleData.find(c => c['circle_name'] === team.circle);
+
+            if (!info) {
+                els.circleDesc.textContent = "サークル情報が見つかりませんでした。";
+                els.circleTwitter.textContent = "-";
+                els.circleHashtag.textContent = "-";
+                els.circleImg.src = "";
+                return;
+            }
+
+            // データ反映
+            els.circleImg.src = info['icon_url'] || '';
+
+            // 修正点: データに「@」が含まれていたら削除する（アイコンがあるため）
+            const rawTwitter = info['twitter'] || '-';
+            els.circleTwitter.textContent = rawTwitter.replace('@', '');
+
+            // 修正点: 「#」を付与せず、データにある場合も削除して表示する（アイコンがあるため）
+            const rawHashtag = info['hashtag'] || '';
+            els.circleHashtag.textContent = rawHashtag ? rawHashtag.replace('#', '') : '-';
+
+            els.circleDesc.textContent = info['description'] || 'コメントはありません';
+        }
+
+        loadData();
+    </script>
+</body>
+
+</html>

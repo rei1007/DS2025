@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>対戦情報</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600&family=Zen+Antique+Soft&family=Yuji+Syuku&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- ベース設定 --- */
+        html, body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: #2b2b2b;
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        .container {
+            width: 1500px;
+            height: 910px;
+            position: relative;
+        }
+
+        /* --- ヘッダーエリア --- */
+        .match-header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1400px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* --- ラウンド情報 --- */
+        .round-info {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Yuji Syuku', serif;
+            font-size: 30px;
+            font-weight: bold;
+            color: #555;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2px 20px;
+            border-radius: 10px;
+            white-space: nowrap;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .bo-info {
+            font-size: 0.9em;
+            background: #555;
+            color: #fff;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-family: 'Zen Antique Soft', serif;
+            font-weight: normal;
+        }
+
+        /* --- チーム情報ラッパー --- */
+        .team-wrapper {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .team-alpha { align-items: flex-end; padding-right: 20px; text-align: right; }
+        .team-bravo { align-items: flex-start; padding-left: 20px; text-align: left; }
+
+        /* 敗者グレーアウト */
+        .loser-style {
+            filter: grayscale(100%);
+            opacity: 0.4;
+        }
+
+        /* --- テキスト表示エリア --- */
+        .sub-info-wrapper {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            overflow: hidden; 
+        }
+        .team-alpha .sub-info-wrapper { justify-content: flex-end; }
+        .team-bravo .sub-info-wrapper { justify-content: flex-start; }
+
+        .sub-info {
+            font-size: 35px;
+            color: #555;
+            font-family: 'Yuji Syuku', serif;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: opacity 0.5s;
+        }
+        .sub-info.fade-out { opacity: 0; }
+
+        .team-name-wrapper {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            margin-top: -5px;
+            overflow: hidden;
+        }
+        .team-alpha .team-name-wrapper { justify-content: flex-end; }
+        .team-bravo .team-name-wrapper { justify-content: flex-start; }
+
+        .team-name {
+            font-size: 60px; 
+            font-family: 'Zen Antique Soft', serif;
+            line-height: 1.1;
+            white-space: nowrap;
+            transition: font-size 0.3s;
+        }
+        .team-alpha .team-name { color: #b0b32c; }
+        .team-bravo .team-name { color: #9054c2; }
+
+        /* --- スコアエリア --- */
+        .score-area {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding-top: 15px;
+        }
+
+        .score { 
+            font-size: 90px;
+            font-family: 'Zen Antique Soft', serif;
+            font-weight: bold; 
+            line-height: 1;
+        }
+        .score.alpha { color: #b0b32c; }
+        .score.bravo { color: #9054c2; }
+        
+        .vs-text { 
+            font-size: 40px; 
+            color: #aaa; 
+            margin-top: 15px; 
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        /* --- メインコンテンツエリア --- */
+        .match-content {
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1400px;
+            height: 690px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 80px;
+        }
+
+        .team-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .team-column.alpha {
+            border-right: 1px solid rgba(176, 179, 44, 0.5);
+            padding-right: 40px;
+        }
+        .team-column.bravo {
+            border-left: 1px solid rgba(144, 84, 194, 0.4);
+            padding-left: 40px;
+        }
+
+        .members {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 35px;
+            flex-grow: 1;
+            padding-top: 20px;
+        }
+        .team-column.alpha .members { align-items: flex-end; }
+        .team-column.bravo .members { align-items: flex-start; }
+
+        .member-name {
+            font-size: 60px;
+            font-family: 'Zen Antique Soft', serif;
+            color: #2b2b2b;
+            line-height: 1.2;
+            border-bottom: 2px solid #888;
+            white-space: nowrap;
+        }
+
+        /* 下部エリア */
+        .bottom-info-row {
+            height: 210px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+        }
+        .team-column.alpha .bottom-info-row { flex-direction: row; }
+        .team-column.bravo .bottom-info-row { flex-direction: row; }
+
+        /* XPブロック */
+        .xp-block {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            transition: opacity 0.5s;
+        }
+        .team-column.alpha .xp-block { align-items: flex-end; text-align: right; }
+        .team-column.bravo .xp-block { align-items: flex-start; text-align: left; }
+
+        .xp-label {
+            background-color: #888;
+            font-size: 30px;
+            padding: 0 10px;
+            font-family: 'Zen Antique Soft', serif;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .xp-value {
+            font-size: 44px;
+            font-family: 'Zen Antique Soft', serif;
+            font-weight: bold;
+            color: #444;
+            line-height: 1;
+        }
+
+        /* ステージブロック */
+        .stage-block {
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .stage-block.show { opacity: 1; }
+        
+        .stage-label {
+            font-size: 40px;
+            font-family: 'Yuji Syuku', serif;
+            color: #666;
+            white-space: nowrap;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            border-bottom: solid 2px #666;
+        }
+
+        .stage-img-frame {
+            height: 200px;
+            aspect-ratio: 40 / 31;
+            background-color: #fff;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 2px solid #ccc;
+        }
+        .stage-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #ddd;
+            display: block;
+        }
+
+        /* --- 勝利表示 --- */
+        .win-indicator {
+            display: none;
+            position: absolute;
+            bottom: 30px;
+            font-family: 'Zen Antique Soft', serif;
+            font-size: 100px;
+            font-weight: nomal;
+            line-height: 1;
+            text-shadow: 4px 4px 0 #fff, 0 0 20px rgba(255,255,255,0.8);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .win-indicator.show { display: block; }
+        
+        .team-column.alpha .win-indicator { 
+            color: #b0b32c; 
+            left: 0; 
+            text-align: left;
+        }
+        .team-column.bravo .win-indicator { 
+            color: #9054c2; 
+            right: 0; 
+            text-align: right;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        
+        <div class="match-header">
+            <div class="round-info">
+                <span id="round-name">--</span>
+                <span id="bo-count" class="bo-info">BO3</span>
+            </div>
+
+            <div class="team-wrapper team-alpha" id="alpha-wrapper">
+                <div class="sub-info-wrapper">
+                    <div class="sub-info" id="alpha-univ">-</div>
+                </div>
+                <div class="team-name-wrapper">
+                    <div class="team-name" id="alpha-name">Alpha Team</div>
+                </div>
+            </div>
+
+            <div class="score-area">
+                <div class="score alpha" id="alpha-score">0</div>
+                <div class="vs-text">対</div>
+                <div class="score bravo" id="bravo-score">0</div>
+            </div>
+
+            <div class="team-wrapper team-bravo" id="bravo-wrapper">
+                <div class="sub-info-wrapper">
+                    <div class="sub-info" id="bravo-univ">-</div>
+                </div>
+                <div class="team-name-wrapper">
+                    <div class="team-name" id="bravo-name">Bravo Team</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="match-content">
+            <div class="team-column alpha" id="alpha-column">
+                <ul class="members" id="alpha-members"></ul>
+                <div class="bottom-info-row">
+                    <div class="stage-block" id="prev-stage-block">
+                        <div class="stage-img-frame">
+                            <img src="" class="stage-img" id="prev-stage-img" alt="前戦">
+                        </div>
+                        <span class="stage-label">前戦</span>
+                    </div>
+
+                    <div class="win-indicator" id="alpha-win-text">勝利</div>
+
+                    <div class="xp-block" id="alpha-xp-block">
+                        <span class="xp-label">平均XP</span>
+                        <span class="xp-value" id="alpha-xp">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-column bravo" id="bravo-column">
+                <ul class="members" id="bravo-members"></ul>
+                <div class="bottom-info-row">
+                    <div class="xp-block" id="bravo-xp-block">
+                        <span class="xp-label">平均XP</span>
+                        <span class="xp-value" id="bravo-xp">-</span>
+                    </div>
+
+                    <div class="win-indicator" id="bravo-win-text">勝利</div>
+
+                    <div class="stage-block" id="next-stage-block">
+                        <span class="stage-label">次戦</span>
+                        <div class="stage-img-frame">
+                            <img src="" class="stage-img" id="next-stage-img" alt="次戦">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAotBKDxazOEtOv_IzoqW9bNPQXaz7a3vA",
+            authDomain: "daigakuhai-support-fb.firebaseapp.com",
+            projectId: "daigakuhai-support-fb",
+            storageBucket: "daigakuhai-support-fb.firebasestorage.app",
+            messagingSenderId: "939931798179",
+            appId: "1:939931798179:web:8320fba89104e81f47cd16"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const matchRef = doc(db, "state", "match");
+
+        let teamsData = [];
+
+        const els = {
+            round: document.getElementById('round-name'),
+            bo: document.getElementById('bo-count'),
+            alpha: {
+                wrapper: document.getElementById('alpha-wrapper'),
+                column: document.getElementById('alpha-column'),
+                name: document.getElementById('alpha-name'),
+                univ: document.getElementById('alpha-univ'),
+                score: document.getElementById('alpha-score'),
+                xp: document.getElementById('alpha-xp'),
+                members: document.getElementById('alpha-members'),
+                winText: document.getElementById('alpha-win-text')
+            },
+            bravo: {
+                wrapper: document.getElementById('bravo-wrapper'),
+                column: document.getElementById('bravo-column'),
+                name: document.getElementById('bravo-name'),
+                univ: document.getElementById('bravo-univ'),
+                score: document.getElementById('bravo-score'),
+                xp: document.getElementById('bravo-xp'),
+                members: document.getElementById('bravo-members'),
+                winText: document.getElementById('bravo-win-text')
+            },
+            prevStage: {
+                block: document.getElementById('prev-stage-block'),
+                img: document.getElementById('prev-stage-img')
+            },
+            nextStage: {
+                block: document.getElementById('next-stage-block'),
+                img: document.getElementById('next-stage-img')
+            }
+        };
+
+        function getCustomLength(str) {
+            let count = 0;
+            for (let i = 0; i < str.length; i++) {
+                const c = str.charCodeAt(i);
+                if ((c >= 0x20 && c <= 0x7e) || (c >= 0xff61 && c <= 0xff9f)) {
+                    count += 0.5;
+                } else {
+                    count += 1.0;
+                }
+            }
+            return count;
+        }
+
+        function adjustTeamNameSize(element, text) {
+            const length = getCustomLength(text);
+            let size = 60; 
+            if (length > 9) {
+                const diff = length - 9;
+                size = 60 - (diff * 4);
+            }
+            if (size < 35) size = 35;
+            element.style.fontSize = `${size}px`;
+            element.textContent = text;
+        }
+
+        const switchTimers = new Map();
+
+        function updateSubInfoDisplay(element, univName, circleName) {
+            if (switchTimers.has(element)) {
+                clearInterval(switchTimers.get(element));
+                switchTimers.delete(element);
+            }
+            const fullText = `${univName || ''} ${circleName || ''}`.trim();
+            element.textContent = fullText;
+            element.classList.remove('fade-out');
+
+            const parentWidth = element.parentElement.clientWidth;
+            if (element.scrollWidth > parentWidth) {
+                startSwitchCycle(element, univName, circleName);
+            }
+        }
+
+        function startSwitchCycle(element, text1, text2) {
+            let showFirst = true;
+            element.textContent = text1;
+            const timerId = setInterval(async () => {
+                element.classList.add('fade-out');
+                await new Promise(r => setTimeout(r, 500));
+                showFirst = !showFirst;
+                element.textContent = showFirst ? text1 : text2;
+                element.classList.remove('fade-out');
+            }, 5000);
+            switchTimers.set(element, timerId);
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch('../json/teams.json');
+                teamsData = await res.json();
+                
+                onSnapshot(matchRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        updateUI(docSnap.data());
+                    }
+                });
+            } catch (e) {
+                console.error("Data loading failed:", e);
+            }
+        }
+
+        function updateUI(matchState) {
+            let alphaPoints = 0;
+            let bravoPoints = 0;
+            const games = matchState.games || [];
+            games.forEach(g => {
+                if (g.winner === 'alpha') alphaPoints++;
+                if (g.winner === 'bravo') bravoPoints++;
+            });
+
+            // ラウンド名 (修正: matchName -> roundName)
+            if (matchState.roundName) {
+                els.round.textContent = matchState.roundName;
+            } else {
+                els.round.textContent = "試合情報";
+            }
+            
+            // BOカウント
+            const boType = matchState.boType || 'BO3';
+            els.bo.textContent = boType;
+
+            updateTeam('alpha', matchState.alphaTeamId, alphaPoints);
+            updateTeam('bravo', matchState.bravoTeamId, bravoPoints);
+
+            // 勝敗判定と表示
+            const winCount = boType === 'BO5' ? 3 : 2;
+            const alphaWon = alphaPoints >= winCount;
+            const bravoWon = bravoPoints >= winCount;
+            const isFinished = alphaWon || bravoWon;
+
+            handleMatchResult(isFinished, alphaWon, bravoWon);
+
+            if (!isFinished) {
+                updateStages(games);
+            }
+        }
+
+        function handleMatchResult(isFinished, alphaWon, bravoWon) {
+            // リセット
+            els.alpha.wrapper.classList.remove('loser-style');
+            els.alpha.column.classList.remove('loser-style');
+            els.bravo.wrapper.classList.remove('loser-style');
+            els.bravo.column.classList.remove('loser-style');
+            
+            els.alpha.winText.classList.remove('show');
+            els.bravo.winText.classList.remove('show');
+
+            els.prevStage.block.classList.remove('show');
+            els.nextStage.block.classList.remove('show');
+
+            if (!isFinished) return; 
+
+            // 勝敗がついた場合
+            if (alphaWon) {
+                els.alpha.winText.classList.add('show');
+                els.bravo.wrapper.classList.add('loser-style');
+                els.bravo.column.classList.add('loser-style');
+            } else if (bravoWon) {
+                els.bravo.winText.classList.add('show');
+                els.alpha.wrapper.classList.add('loser-style');
+                els.alpha.column.classList.add('loser-style');
+            }
+        }
+
+        function updateTeam(side, teamId, score) {
+            const el = els[side];
+            el.score.textContent = score;
+
+            const team = teamsData.find(t => String(t.id) === String(teamId));
+            if (!team) {
+                adjustTeamNameSize(el.name, "未選択");
+                updateSubInfoDisplay(el.univ, "-", "");
+                el.xp.textContent = "-";
+                el.members.innerHTML = "";
+                return;
+            }
+
+            adjustTeamNameSize(el.name, team.teamName);
+            updateSubInfoDisplay(el.univ, team.university, team.circle);
+            el.xp.textContent = team.team_average_xp || '-';
+
+            el.members.innerHTML = "";
+            for (let i = 1; i <= 4; i++) {
+                const name = team[`p${i}_name`];
+                if (name && name.trim() !== '----') {
+                    const li = document.createElement('li');
+                    li.className = 'member-name';
+                    li.textContent = name;
+                    el.members.appendChild(li);
+                }
+            }
+        }
+
+        function updateStages(games) {
+            const finishedCount = games.filter(g => g.winner !== 'none').length;
+            
+            if (finishedCount > 0) {
+                const prevGame = games[finishedCount - 1];
+                let imgSrc = `../stage-image/${prevGame.stage}.png`;
+                if (prevGame.winner === 'alpha') imgSrc = `../stage-alpha/${prevGame.stage}.png`;
+                if (prevGame.winner === 'bravo') imgSrc = `../stage-bravo/${prevGame.stage}.png`;
+
+                els.prevStage.img.src = imgSrc;
+                els.prevStage.block.classList.add('show');
+            } else {
+                els.prevStage.block.classList.remove('show');
+            }
+
+            if (finishedCount < games.length) {
+                const nextGame = games[finishedCount];
+                els.nextStage.img.src = `../stage-image/${nextGame.stage}.png`;
+                els.nextStage.block.classList.add('show');
+            } else {
+                els.nextStage.block.classList.remove('show');
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
