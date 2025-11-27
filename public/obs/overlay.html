@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>バトルオーバーレイ - 真打スタイル (下部配置版)</title>
-    
+    <title>バトルオーバーレイ - 真打スタイル (選手名固定・可変統合版)</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kosugi&family=Shippori+Mincho+B1&family=WDXL+Lubrifont+JP+N&family=Yuji+Syuku&family=Yusei+Magic&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kosugi&family=Shippori+Mincho+B1&family=WDXL+Lubrifont+JP+N&family=Yuji+Syuku&family=Yusei+Magic&family=Zen+Antique+Soft&display=swap"
+        rel="stylesheet">
+
     <style>
-        /* --- デザイン定義 (共通) --- */
+        /* --- デザイン定義 --- */
         :root {
             --color-white-bg: #f5f5f5;
             --color-main-bg: #dfd3b2;
@@ -18,7 +21,7 @@
             --color-black: #000000;
             --color-alpha: #d0be08;
             --color-bravo: #3a0ccd;
-            
+
             --font-yuji: "Yuji Syuku", serif;
             --font-WDXL: "WDXL Lubrifont JP N", sans-serif;
             --font-zen-antique: "Zen Antique Soft", serif;
@@ -44,58 +47,85 @@
             background: transparent;
         }
 
-        /* --- ラウンド情報 (左上に移動) --- */
+        /* --- ラウンド情報 --- */
         #round {
             position: absolute;
             top: 30px;
-            left: 30px;
-            padding: 5px 25px;
+            left: 0px;
+            padding: 10px 30px 10px 40px;
             font-family: var(--font-kosugi);
             font-size: 28px;
+            font-family: var(--font-zen-antique);
             font-weight: bold;
-            line-height: 1.5;
-            color: var(--color-white-bg);
-            text-align: center;
-            background: var(--color-accent);
-            border-radius: 20px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            line-height: 1.2;
+            color: #333;
+            background: rgba(245, 245, 245, 0.95);
+            border-radius: 0 20px 20px 0;
+            border-right: 3px solid var(--color-accent);
+            border-bottom: 3px solid var(--color-accent);
+            border-top: 3px solid var(--color-accent);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
             z-index: 10;
         }
 
-        /* --- メインラッパー (左右の下部配置用) --- */
+        #round::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 100%;
+            background-color: var(--color-accent);
+        }
+
+        /* --- メインラッパー --- */
         .side-wrapper {
             position: absolute;
             bottom: 30px;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* メンバーリストとチーム情報の隙間 */
-            width: 420px; /* 横幅調整 */
+            /* 幅の制約を外し、中身の要素に従わせる */
+            width: auto;
+            /* 影はラッパー全体にかける */
+            filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2));
         }
 
         #alpha-wrapper {
             left: 0;
-            align-items: flex-start; /* 左寄せ */
+            align-items: flex-start;
+            /* 左揃え */
         }
 
         #bravo-wrapper {
             right: 0;
-            align-items: flex-end; /* 右寄せ */
+            align-items: flex-end;
+            /* 右揃え */
         }
 
-        /* --- メンバーリスト (既存スタイルの調整) --- */
+        /* --- 選手リスト (固定幅) --- */
         .members-box {
-            background: rgba(245, 245, 245, 0.95);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             justify-content: center;
             gap: 5px;
-            width: 400px;
+            padding-bottom: 10px;
+            background: rgba(245, 245, 245, 0.95);
+            width: 370px;
+
+            /* 重なり処理のための設定 */
+            position: relative;
+            /* チーム情報より上に表示 */
+            margin-bottom: 0;
+            /* チーム情報のボーダーに被せる */
         }
-        
-        /* 行（名前+hr）の制御用 */
-        .member-row { display: block; }
-        .member-row.hidden { display: none; }
+
+        .member-row {
+            display: block;
+        }
+
+        .member-row.hidden {
+            display: none;
+        }
 
         .member {
             font-family: var(--font-shippori-mincho);
@@ -106,7 +136,7 @@
             white-space: nowrap;
             display: block;
         }
-        
+
         hr {
             border: none;
             height: 1px;
@@ -116,13 +146,14 @@
 
         /* Alpha Members Style */
         #alpha-members {
-            padding: 15px 15px 15px 35px;
-            border-radius: 0 20px 20px 0;
+            padding: 15px 15px 10px 35px;
+            border-radius: 0 20px 0 0;
             border-top: 3px solid var(--color-alpha);
             border-right: 3px solid var(--color-alpha);
-            border-bottom: 3px solid var(--color-alpha);
-            position: relative;
+            border-bottom: none;
+            /* 下線なし */
         }
+
         #alpha-members::before {
             content: "";
             position: absolute;
@@ -131,19 +162,25 @@
             width: 15px;
             height: 100%;
             background-color: var(--color-alpha);
+            z-index: 1;
         }
-        #alpha-members hr { background-color: var(--color-alpha); opacity: 0.5; }
+
+        #alpha-members hr {
+            background-color: var(--color-alpha);
+            opacity: 0.5;
+        }
 
         /* Bravo Members Style */
         #bravo-members {
-            padding: 15px 35px 15px 15px;
+            padding: 15px 35px 10px 15px;
             text-align: right;
-            border-radius: 20px 0 0 20px;
+            border-radius: 20px 0 0 0;
             border-top: 3px solid var(--color-bravo);
             border-left: 3px solid var(--color-bravo);
-            border-bottom: 3px solid var(--color-bravo);
-            position: relative;
+            border-bottom: none;
+            /* 下線なし */
         }
+
         #bravo-members::before {
             content: "";
             position: absolute;
@@ -152,30 +189,55 @@
             width: 15px;
             height: 100%;
             background-color: var(--color-bravo);
+            z-index: 1;
         }
-        #bravo-members hr { background-color: var(--color-bravo); opacity: 0.5; }
+
+        #bravo-members hr {
+            background-color: var(--color-bravo);
+            opacity: 0.5;
+        }
 
 
-        /* --- チーム情報エリア (新規作成) --- */
+        /* --- チーム情報エリア (可変幅) --- */
         .team-info-box {
             display: flex;
             align-items: center;
+            padding: 5px 20px;
+            /* 上paddingを少し増やして調整 */
             background: rgba(245, 245, 245, 0.95);
-            padding: 10px 20px;
-            width: 100%; 
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+
+            /* 幅の設定 */
+            min-width: 390px;
+            /* 選手リストと同じ幅以上 */
+            width: fit-content;
+            /* 中身に合わせて伸びる */
+            max-width: 800px;
+
             position: relative;
+            z-index: 1;
+            /* 選手リストの下 */
         }
+
+        /* 結合部のロジック:
+           選手リスト(z-index:10)がチーム情報(z-index:1)の上に被さる(margin-bottom:-3px)。
+           これにより、チーム情報の「上ボーダー」のうち、重なっている部分は選手リストの背景で隠れ、
+           はみ出している部分だけボーダーが見えるようになる。
+        */
 
         /* Alpha Info */
         #alpha-info {
             border-radius: 0 20px 20px 0;
+            /* 右上も丸くしておく(はみ出した時用) */
             border-right: 3px solid var(--color-accent);
             border-bottom: 3px solid var(--color-accent);
-            flex-direction: row; /* スコア左、名前右 */
-            padding-left: 30px; /* 左端装飾の分 */
+            border-top: 3px solid var(--color-accent);
+            /* 隠される前提で線を描く */
+
+            flex-direction: row;
+            padding-left: 30px;
         }
-        #alpha-info::before { /* 左端のカラーバー */
+
+        #alpha-info::before {
             content: "";
             position: absolute;
             top: 0;
@@ -188,12 +250,17 @@
         /* Bravo Info */
         #bravo-info {
             border-radius: 20px 0 0 20px;
+            /* 左上も丸くしておく */
             border-left: 3px solid var(--color-accent);
             border-bottom: 3px solid var(--color-accent);
-            flex-direction: row-reverse; /* スコア右、名前左 */
-            padding-right: 30px; /* 右端装飾の分 */
+            border-top: 3px solid var(--color-accent);
+            /* 隠される前提で線を描く */
+
+            flex-direction: row-reverse;
+            padding-right: 30px;
         }
-        #bravo-info::before { /* 右端のカラーバー */
+
+        #bravo-info::before {
             content: "";
             position: absolute;
             top: 0;
@@ -206,16 +273,25 @@
         /* スコア数字 */
         .score-display {
             font-family: var(--font-WDXL);
-            font-size: 55px;
+            font-size: 60px;
             line-height: 1;
             color: #fff;
-            padding: 0 15px;
-            min-width: 60px;
+            padding: 0 10px;
+            min-width: 70px;
             text-align: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
         }
-        .score-display.alpha { color: var(--color-alpha); -webkit-text-stroke: 1px #555; }
-        .score-display.bravo { color: var(--color-bravo); -webkit-text-stroke: 1px #555; }
+
+        .score-display.alpha {
+            color: var(--color-alpha);
+            -webkit-text-stroke: 1px #555;
+        }
+
+        .score-display.bravo {
+            color: var(--color-bravo);
+            -webkit-text-stroke: 1px #555;
+        }
 
         /* テキストエリア */
         .team-text-area {
@@ -223,63 +299,83 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 0 15px;
+            margin: 0 10px;
+            min-height: 80px;
         }
-        #bravo-info .team-text-area { text-align: right; }
 
-        .univ-name {
-            font-family: var(--font-yuji);
-            font-size: 20px;
-            color: #555;
-            line-height: 1.2;
-            margin-bottom: 2px;
+        #bravo-info .team-text-area {
+            text-align: right;
+            align-items: flex-end;
         }
+
+        /* チーム名スタイル */
         .team-name {
             font-family: var(--font-zen-antique);
-            font-size: 36px;
+            font-size: 40px;
             font-weight: normal;
             line-height: 1.1;
             color: #222;
+            margin-bottom: 5px;
             white-space: nowrap;
+            /* 折り返さず幅を広げる */
         }
 
-        /* ポイント（勝利数）バー */
+        /* ポイントバー */
         .points-bar {
             display: flex;
             gap: 5px;
-            margin-top: 5px;
-            height: 8px;
+            height: 6px;
             width: 100%;
+            max-width: 200px;
         }
-        #bravo-info .points-bar { justify-content: flex-end; }
+
+        #bravo-info .points-bar {
+            justify-content: flex-end;
+        }
 
         .point-dot {
-            width: 40px; /* 少し長めに */
+            width: 100%;
             height: 100%;
             background-color: #ddd;
-            border-radius: 4px;
+            border-radius: 3px;
         }
-        .point-dot.active.alpha { background-color: var(--color-alpha); }
-        .point-dot.active.bravo { background-color: var(--color-bravo); }
 
+        .point-dot.active.alpha {
+            background-color: var(--color-alpha);
+        }
+
+        .point-dot.active.bravo {
+            background-color: var(--color-bravo);
+        }
     </style>
 </head>
+
 <body>
     <main id="screen">
-        
+
         <div id="round">---</div>
 
         <div id="alpha-wrapper" class="side-wrapper">
             <div id="alpha-members" class="members-box">
-                <div id="alpha-row1" class="member-row"><h2 id="alpha-member1" class="member">-</h2><hr></div>
-                <div id="alpha-row2" class="member-row"><h2 id="alpha-member2" class="member">-</h2><hr></div>
-                <div id="alpha-row3" class="member-row"><h2 id="alpha-member3" class="member">-</h2><hr></div>
-                <div id="alpha-row4" class="member-row"><h2 id="alpha-member4" class="member">-</h2></div>
+                <div id="alpha-row1" class="member-row">
+                    <h2 id="alpha-member1" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="alpha-row2" class="member-row">
+                    <h2 id="alpha-member2" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="alpha-row3" class="member-row">
+                    <h2 id="alpha-member3" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="alpha-row4" class="member-row">
+                    <h2 id="alpha-member4" class="member">-</h2>
+                </div>
             </div>
             <div id="alpha-info" class="team-info-box">
                 <div id="alpha-score-num" class="score-display alpha">0</div>
                 <div class="team-text-area">
-                    <p id="alpha-univ" class="univ-name">---</p>
                     <h1 id="alpha-team-name" class="team-name">---</h1>
                     <div id="alpha-points" class="points-bar"></div>
                 </div>
@@ -288,15 +384,25 @@
 
         <div id="bravo-wrapper" class="side-wrapper">
             <div id="bravo-members" class="members-box">
-                <div id="bravo-row1" class="member-row"><h2 id="bravo-member1" class="member">-</h2><hr></div>
-                <div id="bravo-row2" class="member-row"><h2 id="bravo-member2" class="member">-</h2><hr></div>
-                <div id="bravo-row3" class="member-row"><h2 id="bravo-member3" class="member">-</h2><hr></div>
-                <div id="bravo-row4" class="member-row"><h2 id="bravo-member4" class="member">-</h2></div>
+                <div id="bravo-row1" class="member-row">
+                    <h2 id="bravo-member1" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="bravo-row2" class="member-row">
+                    <h2 id="bravo-member2" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="bravo-row3" class="member-row">
+                    <h2 id="bravo-member3" class="member">-</h2>
+                    <hr>
+                </div>
+                <div id="bravo-row4" class="member-row">
+                    <h2 id="bravo-member4" class="member">-</h2>
+                </div>
             </div>
             <div id="bravo-info" class="team-info-box">
                 <div id="bravo-score-num" class="score-display bravo">0</div>
                 <div class="team-text-area">
-                    <p id="bravo-univ" class="univ-name">---</p>
                     <h1 id="bravo-team-name" class="team-name">---</h1>
                     <div id="bravo-points" class="points-bar"></div>
                 </div>
@@ -323,13 +429,11 @@
 
         let teamsData = [];
 
-        // チームデータの読み込み
         async function loadTeamsData() {
             try {
                 const response = await fetch('../json/teams.json');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 teamsData = await response.json();
-                console.log("Teams loaded:", teamsData.length);
             } catch (e) {
                 console.error("Failed to load teams.json:", e);
             }
@@ -344,7 +448,7 @@
         });
 
         function updateOverlay(matchData) {
-            // --- スコア計算 ---
+            // スコア
             let alphaScore = 0;
             let bravoScore = 0;
             if (matchData.games && Array.isArray(matchData.games)) {
@@ -353,33 +457,27 @@
                     if (game.winner === 'bravo') bravoScore++;
                 });
             }
-            
-            // スコア表示更新
             document.getElementById('alpha-score-num').textContent = alphaScore;
             document.getElementById('bravo-score-num').textContent = bravoScore;
 
-            // --- ラウンド情報 ---
+            // ラウンド情報
             const roundName = matchData.roundName || '試合情報なし';
             const boType = matchData.boType || 'BO3';
             document.getElementById('round').textContent = `${roundName} ${boType}`;
 
-            // --- チーム情報更新 ---
+            // チーム情報
             updateTeamInfo('alpha', matchData.alphaTeamId);
             updateTeamInfo('bravo', matchData.bravoTeamId);
 
-            // --- ポイントバー（勝利数インジケータ） ---
+            // ポイントバー
             updatePointsBar('alpha', alphaScore, boType);
             updatePointsBar('bravo', bravoScore, boType);
         }
 
-        // ポイントバー描画関数（チームごと）
         function updatePointsBar(side, currentWins, boType) {
             const container = document.getElementById(`${side}-points`);
             container.innerHTML = '';
-            
-            // BO5なら3勝で勝ち(最大5試合分表示)、BO3なら2勝で勝ち(最大3試合分表示)
-            // またはシンプルに、先に勝ち越した数(2 or 3)だけランプを表示するデザインにします
-            const maxWins = (boType === 'BO5') ? 3 : 2; 
+            const maxWins = (boType === 'BO5') ? 3 : 2;
 
             for (let i = 0; i < maxWins; i++) {
                 const dot = document.createElement('div');
@@ -393,21 +491,17 @@
 
         function updateTeamInfo(side, teamId) {
             const team = teamsData.find(t => String(t.id) === String(teamId));
-            
-            const elUniv = document.getElementById(`${side}-univ`);
             const elName = document.getElementById(`${side}-team-name`);
 
             if (!team) {
-                elUniv.textContent = "---";
                 elName.textContent = "Waiting...";
                 for (let i = 1; i <= 4; i++) {
                     const row = document.getElementById(`${side}-row${i}`);
-                    if(row) row.classList.add('hidden');
+                    if (row) row.classList.add('hidden');
                 }
                 return;
             }
 
-            elUniv.textContent = `${team.university || ''} ${team.circle || ''}`;
             elName.textContent = team.teamName;
 
             for (let i = 1; i <= 4; i++) {
@@ -426,4 +520,5 @@
         }
     </script>
 </body>
+
 </html>
