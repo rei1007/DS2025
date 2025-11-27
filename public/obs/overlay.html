@@ -47,14 +47,15 @@
         /* --- 左上情報ボックス (大会名・ラウンド・実況解説) --- */
         #top-left-box {
             position: absolute;
-            top: 30px;
+            top: 0px;
             left: 0px;
             display: flex;
             flex-direction: column;
             
             /* ベースデザイン */
             background: rgba(245, 245, 245, 0.95);
-            border-radius: 0 20px 20px 0;
+            border-radius: 0 0 20px 0;
+            border-top: none;
             border-right: 3px solid var(--color-accent);
             border-bottom: 3px solid var(--color-accent);
             border-top: 3px solid var(--color-accent);
@@ -142,7 +143,7 @@
         /* --- メインラッパー (下部) --- */
         .side-wrapper {
             position: absolute;
-            bottom: 30px;
+            bottom: 0px;
             display: flex;
             flex-direction: column;
             width: auto;
@@ -250,11 +251,10 @@
 
         /* Alpha Info */
         #alpha-info {
-            border-radius: 0 20px 20px 0;
+            border-radius: 0 20px 0 0;
             border-right: 3px solid var(--color-accent);
-            border-bottom: 3px solid var(--color-accent);
+            border-bottom: none;
             border-top: 3px solid var(--color-accent);
-            
             flex-direction: row; 
             padding-left: 30px; 
         }
@@ -270,9 +270,9 @@
 
         /* Bravo Info */
         #bravo-info {
-            border-radius: 20px 0 0 20px;
+            border-radius: 20px 0 0 0;
             border-left: 3px solid var(--color-accent);
-            border-bottom: 3px solid var(--color-accent);
+            border-bottom: none;
             border-top: 3px solid var(--color-accent);
             
             flex-direction: row-reverse;
