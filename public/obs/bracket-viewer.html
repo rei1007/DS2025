@@ -39,16 +39,16 @@
             width: 100%;
             height: 100%;
             overflow: hidden; /* ブラウザ自体のスクロールバーは消す */
+            background-color: var(--color-bg); /* htmlにも背景色を指定して透過防止 */
         }
 
         body {
             font-family: 'Zen Kaku Gothic New', 'Kosugi Maru', sans-serif;
             
-            /* 背景設定 (復活) */
+            /* 背景設定 (透過なし・単色) */
             background-color: var(--color-bg);
             color: var(--color-main);
-            background-image: radial-gradient(#E5E7EB 2px, transparent 2px);
-            background-size: 32px 32px;
+            /* background-image: ... を削除してドット柄（透明要素）を排除 */
             
             /* 1920x1080 固定サイズ */
             width: 1920px;
@@ -79,7 +79,6 @@
             
             /* Flexbox設定 (中央寄せ & はみ出し対応) */
             display: flex;
-            /* justify-content/align-items center は削除 (margin: autoに任せる) */
             
             /* Scrollbar非表示 */
             scrollbar-width: none; 
@@ -103,7 +102,7 @@
             /* コンテンツ周囲の余白 (スクロール時に端が切れないように) */
             padding: 60px;
             
-            /* 幅と高さの確保 (これがないと潰れてスクロールできない場合がある) */
+            /* 幅と高さの確保 */
             min-width: max-content;
             min-height: max-content;
         }
@@ -111,10 +110,11 @@
         .round-column {
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
+            /* 上揃えに変更 */
+            justify-content: flex-start;
             width: 340px;
             position: relative;
-            gap: 40px; /* 縦方向の最低間隔を確保 */
+            gap: 40px; /* カード間の固定間隔 */
         }
 
         .round-header {
