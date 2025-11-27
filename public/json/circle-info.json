@@ -10,7 +10,7 @@
     },
     {
         "circleName": "squec",
-        "circle_kana": "----",
+        "circle_kana": "すくえっく",
         "university": "電気通信大学",
         "twitter": "@UECSplatoon",
         "description": "オンオフ問わず多彩な大会を開催し、学部生から院生まで年齢に関わらず仲良くスプラトゥーンをしています🎶",
@@ -37,7 +37,7 @@
     },
     {
         "circleName": "すぷぱれ！",
-        "circle_kana": "----",
+        "circle_kana": "(近畿大学esportsサークルスプラトゥーン部門)",
         "university": "近畿大学",
         "twitter": "@kindaisplatoon3",
         "description": "カジュアルなプラべ、上級者のみのプラべ、オフライン交流会を行っています! 募集も多くあったり大会も出てたりと活発です！",
@@ -135,8 +135,8 @@
         "hashtag": "イカQWIN"
     },
     {
-        "circleName": "kait esports スプラ部門",
-        "circle_kana": "----",
+        "circleName": "KAITeSports部 スプラ部門",
+        "circle_kana": "かいといーすぽーつぶ すぷらぶもん",
         "university": "神奈川工科大学",
         "twitter": "@KAIT_eSp_Spla",
         "description": "組織存続の危機に立っております。",
@@ -151,5 +151,23 @@
         "description": "1年生から6年生まで！エンジョイ勢からガチ勢まで！！みんなでわいわい大会を開いたりして活動しています！とても明るい雰囲気のサークルです🦑🦑",
         "icon_url": "https://pbs.twimg.com/profile_images/1384844827469119494/neW0R8CA_400x400.jpg",
         "hashtag": "mpuすぷら部WIN"
+    },
+    {
+        "circleName": "Nootal",
+        "circle_kana": "のーたる",
+        "university": "東京理科大学",
+        "twitter": "@splatoon_tus",
+        "description": "初心者からガチマ戦士、ナワバリ勢、アルバイターまで様々な人達がエンジョイ出来る憩いの場として頑張ってます！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1395326249292079107/6I2684s7_400x400.jpg",
+        "hashtag": "NootalWIN"
+    },
+    {
+        "circleName": "イカ阪",
+        "circle_kana": "いかはん",
+        "university": "大阪大学",
+        "twitter": "@ikahan_shinkan",
+        "description": "初大阪大学でスプラトゥーンがしたい人はイカ阪まで！DMお待ちしております！",
+        "icon_url": "https://pbs.twimg.com/profile_images/1965753587407224832/eoKfEQ6d_400x400.jpg",
+        "hashtag": "NootalWIN"
     }
 ]
