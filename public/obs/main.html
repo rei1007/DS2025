@@ -56,15 +56,7 @@
 
         /* --- 左側：縦書きタイトルエリア --- */
         #page-title-area {
-            position: absolute;
-            left: 30px;
-            top: 130px;
-            width: 100px;
-            height: 850px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* 上寄せ */
-            pointer-events: none; /* クリックを透過 */
+            display: none;
         }
 
         #page-title-text {
@@ -86,7 +78,7 @@
         /* --- コンテンツエリア (iframe) --- */
         #content-frame {
             position: absolute;
-            left: 140px;
+            left: 80px;
             top: 100px;
             width: 1500px;
             height: 910px;
@@ -136,7 +128,7 @@
             images[currentImgIndex].classList.remove('active');
             currentImgIndex = (currentImgIndex + 1) % images.length;
             images[currentImgIndex].classList.add('active');
-        }, 12000);
+        }, 8000);
 
 
         // --- 画面切り替えロジック ---
