@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トーナメント待機画面</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kosugi&family=Shippori+Mincho+B1:wght@400;600&family=WDXL+Lubrifont+JP+N&family=Yuji+Syuku&family=Zen+Antique+Soft&family=Chakra+Petch:wght@600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --text-color: #2b2b2b;
+            --main-color: #b0b32c;
+            --bg-color-pale: #f4f4e8;
+            /* 時計の文字色 */
+            --clock-text-color: #33698D;
+        }
+
+        html,
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: var(--text-color);
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        /* === メインコンテナ === */
+        main {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            background-image: url('./image/真打決勝待機画面.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* === お知らせエリア (右下) === */
+        #ticker-area {
+            position: absolute;
+            top: 920px;
+            left: 160px;
+            padding: 20px 0;
+            width: 1505px;
+            background-color: #293868;
+            border-radius: 50px 0 0 50px;
+            z-index: 10;
+        }
+
+        #ticker-text {
+            text-align: center;
+            font-family: 'Zen Antique Soft', serif;
+            font-size: 40px;
+            line-height: 1.25;
+            color: #fff;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #ticker-text.fade-out {
+            opacity: 0;
+        }
+
+        /* === 時計エリア === */
+        .clock-container {
+            position: absolute;
+            left: 1400px;
+            top: 100px;
+            width: 240px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock-label {
+            font-family: 'Kosugi', sans-serif;
+            font-size: 30px;
+            color: #555;
+            margin-bottom: 0px;
+            font-weight: bold;
+        }
+
+        .clock-time {
+            font-family: 'WDXL Lubrifont JP N', sans-serif;
+            font-size: 60px;
+            line-height: 1.1;
+            color: var(--clock-text-color);
+            font-weight: bold;
+        }
+
+        #clock-time-now {
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id="ticker-area">
+            <div id="ticker-text">配信開始までお待ちください</div>
+        </div>
+
+        <div id="clock-current" class="clock-container">
+            <span class="clock-label">現在時刻</span>
+            <span class="clock-time" id="clock-time-now">00:00</span>
+        </div>
+    </main>
+
+    <script type="module">
+        // --- 時計機能 (現在時刻のみ) ---
+        const updateClock = () => {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock-time-now').innerHTML = `${h}:${m}`;
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // --- お知らせテキスト (Ticker) ---
+        const messages = [
+            '「#大学杯」をつけて配信の感想や感動をポストしよう！',
+            '大学杯運営Xアカウント(@daigakuhai)のフォローお願いします！',
+            '運営員募集中！詳しくは大学杯運営XアカウントのDMまで'
+        ];
+        let msgIndex = 0;
+        const tickerEl = document.getElementById('ticker-text');
+
+        function updateTicker() {
+            tickerEl.classList.add('fade-out');
+            setTimeout(() => {
+                msgIndex = (msgIndex + 1) % messages.length;
+                tickerEl.textContent = messages[msgIndex];
+                tickerEl.classList.remove('fade-out');
+            }, 500);
+        }
+        tickerEl.textContent = messages[0];
+        setInterval(updateTicker, 6000);
+    </script>
+</body>
+
+</html>
