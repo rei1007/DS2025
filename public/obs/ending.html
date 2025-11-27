@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>トーナメント待機画面</title>
+    <title>大会終了画面</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,8 @@
             position: relative;
             width: 1920px;
             height: 1080px;
-            background-image: url('./image/真打決勝待機画面.png');
+            /* 背景画像を終了画面用に変更 */
+            background-image: url('./image/真打エンディング画面.png');
             background-repeat: no-repeat;
             background-size: cover;
         }
@@ -107,7 +108,7 @@
 <body>
     <main>
         <div id="ticker-area">
-            <div id="ticker-text">対戦開始までお待ちください</div>
+            <div id="ticker-text">大学杯運営Xアカウント(@daigakuhai)のフォローお願いします！</div>
         </div>
 
         <div id="clock-current" class="clock-container">
@@ -144,7 +145,8 @@
                 tickerEl.classList.remove('fade-out');
             }, 500);
         }
-        tickerEl.textContent = messages[0];
+        
+        // 最初の切り替えまでの待機時間（必要であれば調整してください）
         setInterval(updateTicker, 6000);
     </script>
 </body>

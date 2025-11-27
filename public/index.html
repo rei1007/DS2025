@@ -228,10 +228,10 @@
         <button onclick="openModal()" class="action-card group">
             <div>
                 <p class="card-sub-label">OBS ASSETS</p>
-                <h2 class="card-main-label">OBS用URL<br>リスト</h2>
+                <h2 class="card-main-label">OBS用<br>アセット</h2>
             </div>
             <div class="card-footer">
-                <span class="card-desc">ブラウザソース用リンク</span>
+                <span class="card-desc">ブラウザソース・画像</span>
                 <span class="card-icon material-symbols-rounded">layers</span>
             </div>
         </button>
@@ -247,7 +247,7 @@
             <div class="p-6 border-b-2 border-gray-100 flex justify-between items-center bg-white rounded-t-2xl">
                 <div>
                     <h3 class="font-black text-2xl text-gray-900">OBS ASSETS</h3>
-                    <p class="text-xs font-bold text-gray-400 mt-0.5">クリックしてURLをコピー</p>
+                    <p class="text-xs font-bold text-gray-400 mt-0.5">クリックしてURLをコピー / ダウンロード</p>
                 </div>
                 <button onclick="closeModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-900">
                     <span class="material-symbols-rounded" style="font-size: 32px;">close</span>
@@ -256,23 +256,52 @@
             
             <div class="flex flex-col overflow-y-auto rounded-b-2xl bg-white">
                 
-                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/stream-waiting">
-                    <p class="url-label">WAITING SCREEN</p>
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/stream-waiting.html">
+                    <p class="url-label">STREAM WAITING</p>
                     <p class="url-title">配信待機画面</p>
-                    <span class="url-path">.../obs/stream-waiting</span>
+                    <span class="url-path">.../obs/stream-waiting.html</span>
                 </div>
 
-                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/main">
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/qualifier-waiting.html">
+                    <p class="url-label">QUALIFIER WAITING</p>
+                    <p class="url-title">予選待機画面</p>
+                    <span class="url-path">.../obs/qualifier-waiting.html</span>
+                </div>
+
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/bracket-waiting.html">
+                    <p class="url-label">BRACKET WAITING</p>
+                    <p class="url-title">決勝トーナメント待機画面</p>
+                    <span class="url-path">.../obs/bracket-waiting.html</span>
+                </div>
+
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/main.html">
                     <p class="url-label">MAIN SCREEN</p>
                     <p class="url-title">メイン画面</p>
-                    <span class="url-path">.../obs/main</span>
+                    <span class="url-path">.../obs/main.html</span>
                 </div>
 
-                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/overlay">
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/overlay.html">
                     <p class="url-label">BATTLE OVERLAY</p>
                     <p class="url-title">バトル画面オーバーレイ</p>
-                    <span class="url-path">.../obs/overlay</span>
+                    <span class="url-path">.../obs/overlay.html</span>
                 </div>
+
+                <div class="url-item" onclick="copyUrl(this)" data-url="https://daigakuhai-support.pages.dev/obs/ending.html">
+                    <p class="url-label">ENDING SCREEN</p>
+                    <p class="url-title">エンディング画面</p>
+                    <span class="url-path">.../obs/ending.html</span>
+                </div>
+
+                <a href="https://daigakuhai-support.pages.dev/obs/image/obs-set" download class="url-item block text-inherit no-underline group" style="background-color: #F3F4F6;">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="url-label">DOWNLOAD ASSETS</p>
+                            <p class="url-title">画像素材一括ダウンロード</p>
+                            <span class="url-path text-xs opacity-70">.../obs/image/obs-set</span>
+                        </div>
+                        <span class="material-symbols-rounded text-gray-400 group-hover:text-gray-900 transition-colors" style="font-size: 32px;">download</span>
+                    </div>
+                </a>
 
             </div>
         </div>
