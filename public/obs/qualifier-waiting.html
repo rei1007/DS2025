@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予選待機画面</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kosugi&family=Shippori+Mincho+B1:wght@400;600&family=WDXL+Lubrifont+JP+N&family=Yuji+Syuku&family=Zen+Antique+Soft&family=Chakra+Petch:wght@600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --text-color: #2b2b2b;
+            --main-color: #b0b32c;
+            --bg-color-pale: #f4f4e8;
+            /* 時計の文字色 */
+            --clock-text-color: #33698D;
+        }
+
+        html,
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: var(--text-color);
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        /* === メインコンテナ === */
+        main {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            /* 背景画像: 真打予選待機画面 */
+            background-image: url('./image/真打予選待機画面.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* === サークル紹介エリア (サイズ・位置変更 & 最適化) === */
+        #main-content-area {
+            position: absolute;
+            /* 指定座標とサイズ */
+            top: 500px;
+            left: 20px;
+            width: 1620px;
+            height: 400px;
+            background-color: transparent;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        /* サークル情報コンテナ */
+        #circle-info-container {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            overflow: hidden;
+            /* 下マージン削除 */
+            margin-bottom: 0;
+            padding-bottom: 5px; 
+        }
+
+        #circle-info-container.fade-out {
+            opacity: 0;
+        }
+
+        /* 左側: アイコン・SNS (コンパクト化) */
+        .circle-left-column {
+            /* 幅を縮小 */
+            flex: 0 0 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 3px solid var(--text-color);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* マージン削除 */
+            margin-bottom: 0;
+        }
+
+        .circle-icon-large {
+            /* アイコンサイズを縮小 (350px -> 180px) */
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid var(--text-color);
+            object-fit: cover;
+            margin-bottom: 15px;
+            background-color: #eee;
+        }
+
+        .circle-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-bottom: 5px;
+            font-family: 'Chakra Petch', sans-serif;
+            color: #444;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .circle-meta-icon {
+            /* アイコンサイズ縮小 */
+            font-size: 35px;
+            color: var(--text-color);
+        }
+
+        .circle-meta-text {
+            /* 文字サイズ縮小 */
+            font-size: 35px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Shippori Mincho B1', serif;
+        }
+
+        /* 右側: 大学名・サークル名・説明文 */
+        .circle-right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .circle-header {
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--text-color);
+            padding: 10px 20px;
+            /* 背景なし、または必要に応じて追加 */
+        }
+
+        .circle-univ {
+            font-family: 'Yuji Syuku', serif;
+            /* 文字サイズ縮小 (45px -> 28px) */
+            font-size: 35px;
+            margin-bottom: 0px;
+            color: #293868;
+        }
+
+        .circle-name {
+            font-family: 'Zen Antique Soft', serif;
+            /* 文字サイズ縮小 (60px -> 48px) */
+            font-size: 48px;
+            font-weight: bold;
+            line-height: 1.1;
+            color: #34918B;
+        }
+
+        .circle-desc-box {
+            flex: 1;
+            background-color: rgba(52, 145, 139, 0.2);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            overflow-y: hidden;
+            /* マージン削除 */
+            margin-bottom: 0;
+        }
+
+        .info-title {
+            font-family: 'Yuji Syuku', serif;
+            /* 文字サイズ縮小 */
+            font-size: 30px;
+            color: #444;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background-color: #34918B;
+            margin-right: 10px;
+        }
+
+        .info-text {
+            font-family: "Zen Antique Soft";
+            /* 文字サイズ縮小 (40px -> 26px) */
+            font-size: 30px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            color: #444;
+        }
+
+        /* === お知らせエリア (右下) === */
+        #ticker-area {
+            position: absolute;
+            top: 920px;
+            left: 160px;
+            padding: 20px 0;
+            width: 1505px;
+            background-color: #293868;
+            border-radius: 50px 0 0 50px;
+            z-index: 10;
+        }
+
+        #ticker-text {
+            text-align: center;
+            font-family: 'Zen Antique Soft', serif;
+            font-size: 40px;
+            line-height: 1.25;
+            color: #fff;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #ticker-text.fade-out {
+            opacity: 0;
+        }
+
+        /* === 時計エリア (現在時刻のみ) === */
+        .clock-container {
+            position: absolute;
+            left: 1400px;
+            top: 100px;
+            width: 240px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock-label {
+            font-family: 'Kosugi', sans-serif;
+            font-size: 30px;
+            color: #555;
+            margin-bottom: 0px;
+            font-weight: bold;
+        }
+
+        .clock-time {
+            font-family: 'WDXL Lubrifont JP N', sans-serif;
+            font-size: 60px;
+            line-height: 1.1;
+            color: var(--clock-text-color);
+            font-weight: bold;
+        }
+
+        #clock-time-now {
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id="main-content-area">
+            <div id="circle-info-container">
+                <div class="circle-left-column">
+                    <img id="circle-img" src="" class="circle-icon-large" alt="icon"
+                        onerror="this.src='data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'%23e5e7eb\' viewBox=\'0 0 24 24\'%3e%3cpath d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z\'/%3e%3c/svg%3e'">
+
+                    <div class="circle-meta-item">
+                        <span class="material-symbols-rounded circle-meta-icon">alternate_email</span>
+                        <span class="circle-meta-text" id="circle-twitter">-</span>
+                    </div>
+
+                    <div class="circle-meta-item">
+                        <span class="material-symbols-rounded circle-meta-icon">tag</span>
+                        <span class="circle-meta-text" id="circle-hashtag">-</span>
+                    </div>
+                </div>
+
+                <div class="circle-right-column">
+                    <div class="circle-header">
+                        <div class="circle-univ" id="circle-univ">University</div>
+                        <div class="circle-name" id="circle-name">Circle Name</div>
+                    </div>
+
+                    <div class="circle-desc-box">
+                        <div class="info-title">サークル紹介</div>
+                        <div class="info-text" id="circle-desc"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ticker-area">
+            <div id="ticker-text">配信開始までお待ちください</div>
+        </div>
+
+        <div id="clock-current" class="clock-container">
+            <span class="clock-label">現在時刻</span>
+            <span class="clock-time" id="clock-time-now">00:00</span>
+        </div>
+    </main>
+
+    <script type="module">
+        // --- 時計機能 (現在時刻のみ) ---
+        const updateClock = () => {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock-time-now').innerHTML = `${h}:${m}`;
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // --- お知らせテキスト (Ticker) ---
+        const messages = [
+            '「#大学杯」をつけて配信の感想や感動をポストしよう！',
+            '大学杯運営Xアカウント(@daigakuhai)のフォローお願いします！',
+            '運営員募集中！詳しくは大学杯運営XアカウントのDMまで'
+        ];
+        let msgIndex = 0;
+        const tickerEl = document.getElementById('ticker-text');
+
+        function updateTicker() {
+            tickerEl.classList.add('fade-out');
+            setTimeout(() => {
+                msgIndex = (msgIndex + 1) % messages.length;
+                tickerEl.textContent = messages[msgIndex];
+                tickerEl.classList.remove('fade-out');
+            }, 500);
+        }
+        tickerEl.textContent = messages[0];
+        setInterval(updateTicker, 6000);
+
+        // --- サークル情報切り替え (stream-waitingから移植) ---
+        const els = {
+            container: document.getElementById('circle-info-container'),
+            univ: document.getElementById('circle-univ'),
+            name: document.getElementById('circle-name'),
+            img: document.getElementById('circle-img'),
+            twitter: document.getElementById('circle-twitter'),
+            hashtag: document.getElementById('circle-hashtag'),
+            desc: document.getElementById('circle-desc')
+        };
+
+        let circleDataList = [];
+        let circleIndex = 0;
+
+        async function loadCircleData() {
+            try {
+                // 相対パスは環境に合わせて調整してください
+                const res = await fetch('../json/circle-info.json');
+                circleDataList = await res.json();
+
+                if (circleDataList.length > 0) {
+                    updateCircleDisplay(circleDataList[0]);
+                    if (circleDataList.length > 1) {
+                        setInterval(rotateCircleInfo,8000);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load circle info:", e);
+                els.desc.textContent = "Loading...";
+            }
+        }
+
+        function rotateCircleInfo() {
+            els.container.classList.add('fade-out');
+            setTimeout(() => {
+                circleIndex = (circleIndex + 1) % circleDataList.length;
+                updateCircleDisplay(circleDataList[circleIndex]);
+                els.container.classList.remove('fade-out');
+            }, 500);
+        }
+
+        function updateCircleDisplay(info) {
+            const name = info['circleName'] || info['circle_name'] || info['circle-name'] || '';
+            const univ = info['university'] || info['circle-university'] || '';
+            const icon = info['icon_url'] || info['circle-social-img'] || '';
+            const tw = info['twitter'] || info['circle-social-id'] || '-';
+            const hash = info['hashtag'] || info['circle-social-win'] || '-';
+            const desc = info['description'] || info['circle-comment'] || 'コメントはありません';
+
+            els.univ.textContent = univ;
+            els.name.textContent = name;
+            els.img.src = icon;
+
+            els.twitter.textContent = tw.replace('@', '');
+            els.hashtag.textContent = hash ? hash.replace('#', '') : '-';
+
+            els.desc.innerHTML = desc;
+        }
+
+        loadCircleData();
+    </script>
+</body>
+
+</html>
